@@ -18,6 +18,9 @@ class GitHubFetcher:
     BASE_URL = "https://api.github.com"
 
     def __init__(self, config_path: str = "config/repos.yaml"):
+        # 加载 .env 文件中的环境变量
+        self._load_dotenv()
+
         with open(config_path, "r", encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
 
@@ -33,6 +36,20 @@ class GitHubFetcher:
         })
         if self.token:
             self.session.headers.update({"Authorization": f"token {self.token}"})
+
+    @staticmethod
+    def _load_dotenv():
+        """加载项目根目录的 .env 文件到环境变量。"""
+        import os as _os
+        env_path = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), ".env")
+        if _os.path.exists(env_path):
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, _, value = line.partition("=")
+                        if key.strip() not in _os.environ:
+                            _os.environ[key.strip()] = value.strip()
 
     def _paginate(self, url: str, params: dict) -> list:
         """分页获取 API 数据，返回合并后的结果列表。"""

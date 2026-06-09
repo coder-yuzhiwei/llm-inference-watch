@@ -1,0 +1,21 @@
+# LLM-Inference-Watch 监控仓库配置
+# 格式: owner/repo
+repos:
+  - vllm-project/vllm
+  - sgl-project/sglang
+  - NVIDIA/TensorRT-LLM
+  - ggerganov/llama.cpp
+
+# GitHub API 配置
+github:
+  # 如设置 token 可提高 API 速率限制（5000 次/小时 vs 60 次/小时）
+  # 通过环境变量 GITHUB_TOKEN 传入，不在此文件明文存储
+  per_page: 100
+  max_pages: 5
+
+# 报告配置
+report:
+  timezone: "Asia/Shanghai"
+  daily_lookback_hours: 24
+  weekly_lookback_days: 7
+  monthly_lookback_days: 30

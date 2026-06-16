@@ -95,10 +95,15 @@ class Analyzer:
         commit_categories = Counter()
         commit_authors = Counter()
         for c in commits:
-            msg = c.get("commit", {}).get("message", "")
+            msg = c.get("message", "") or c.get("commit", {}).get("message", "")
             cat = self.classifier.classify_commit(msg)
             commit_categories[cat] += 1
-            author = c.get("commit", {}).get("author", {}).get("name", "unknown")
+            
+            author_raw = c.get("author", "")
+            if isinstance(author_raw, dict):
+                author = author_raw.get("name", "") or author_raw.get("login", "unknown")
+            else:
+                author = author_raw or c.get("commit", {}).get("author", {}).get("name", "unknown")
             commit_authors[author] += 1
 
         # Issue 分类统计
@@ -127,11 +132,14 @@ class Analyzer:
             # 标记高互动 PR
             comments = pr.get("comments", 0) + pr.get("review_comments", 0)
             if comments >= 5:
+                user = pr.get("user", "")
+                if isinstance(user, dict):
+                    user = user.get("login", "")
                 notable_prs.append({
                     "number": pr.get("number"),
                     "title": pr.get("title"),
                     "html_url": pr.get("html_url"),
-                    "user": pr.get("user", {}).get("login", ""),
+                    "user": user,
                     "comments": comments,
                     "state": "merged" if pr.get("merged_at") else pr.get("state"),
                     "category": cat,
@@ -143,11 +151,14 @@ class Analyzer:
         notable_issues = []
         for i in issues:
             if i.get("comments", 0) >= 3:
+                user = i.get("user", "")
+                if isinstance(user, dict):
+                    user = user.get("login", "")
                 notable_issues.append({
                     "number": i.get("number"),
                     "title": i.get("title"),
                     "html_url": i.get("html_url"),
-                    "user": i.get("user", {}).get("login", ""),
+                    "user": user,
                     "comments": i.get("comments", 0),
                     "state": i.get("state"),
                 })

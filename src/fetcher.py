@@ -9,6 +9,8 @@ from typing import Optional
 import requests
 import yaml
 
+from src.utils import load_dotenv
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,8 +20,7 @@ class GitHubFetcher:
     BASE_URL = "https://api.github.com"
 
     def __init__(self, config_path: str = "config/repos.yaml"):
-        # 加载 .env 文件中的环境变量
-        self._load_dotenv()
+        load_dotenv()
 
         with open(config_path, "r", encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
@@ -28,6 +29,10 @@ class GitHubFetcher:
         self.per_page = self.config["github"].get("per_page", 100)
         self.max_pages = self.config["github"].get("max_pages", 5)
         self.token = os.environ.get("GITHUB_TOKEN")
+        if self.token:
+            logger.info("GitHub Token loaded (length: %d)", len(self.token))
+        else:
+            logger.warning("No GitHub Token found, using unauthenticated API (rate limited)")
 
         self.session = requests.Session()
         self.session.headers.update({
@@ -37,19 +42,13 @@ class GitHubFetcher:
         if self.token:
             self.session.headers.update({"Authorization": f"token {self.token}"})
 
-    @staticmethod
-    def _load_dotenv():
-        """加载项目根目录的 .env 文件到环境变量。"""
-        import os as _os
-        env_path = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), ".env")
-        if _os.path.exists(env_path):
-            with open(env_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line and not line.startswith("#") and "=" in line:
-                        key, _, value = line.partition("=")
-                        if key.strip() not in _os.environ:
-                            _os.environ[key.strip()] = value.strip()
+        proxy_url = os.environ.get("HTTP_PROXY", os.environ.get("PROXY_URL"))
+        if proxy_url:
+            self.session.proxies = {
+                "http": proxy_url,
+                "https": proxy_url,
+            }
+            logger.info("Using proxy: %s", proxy_url)
 
     def _paginate(self, url: str, params: dict) -> list:
         """分页获取 API 数据，返回合并后的结果列表。"""
@@ -149,8 +148,13 @@ class GitHubFetcher:
 
     # ─── 批量获取 ──────────────────────────────────────────
 
-    def fetch_all(self, since: datetime) -> dict:
-        """批量获取所有配置仓库的完整数据快照。"""
+    def fetch_all(self, since: datetime, mode: str = "light") -> dict:
+        """批量获取所有配置仓库的数据快照。
+        
+        Args:
+            since: 时间过滤起始点
+            mode: light（轻量模式，过滤无关数据）或 full（全量模式，保留所有数据）
+        """
         results = {}
         for full_name in self.repos:
             owner, repo = full_name.split("/")
@@ -158,18 +162,98 @@ class GitHubFetcher:
 
             try:
                 repo_info = self.get_repo_info(owner, repo)
+                commits = self.get_commits(owner, repo, since)
+                issues = self.get_issues(owner, repo, since)
+                pull_requests = self.get_pull_requests(owner, repo, since)
+                releases = self.get_releases(owner, repo, since)
+
+                if mode == "light":
+                    commits = self._filter_commits(commits)
+                    issues = self._filter_issues(issues)
+                    pull_requests = self._filter_prs(pull_requests)
+                    repo_info = self._filter_repo_info(repo_info)
+
                 results[full_name] = {
                     "info": repo_info,
-                    "commits": self.get_commits(owner, repo, since),
-                    "issues": self.get_issues(owner, repo, since),
-                    "pull_requests": self.get_pull_requests(owner, repo, since),
-                    "releases": self.get_releases(owner, repo, since),
+                    "commits": commits,
+                    "issues": issues,
+                    "pull_requests": pull_requests,
+                    "releases": releases,
                 }
             except Exception as e:
                 logger.error("Failed to fetch %s: %s", full_name, e)
                 results[full_name] = {"error": str(e)}
 
         return results
+
+    @staticmethod
+    def _filter_commits(commits: list) -> list:
+        """轻量模式下过滤 commits：过滤 CI/Docs 等非核心提交，保留关键字段。"""
+        ignore_keywords = ["ci", "docs", "documentation", "readme", "changelog", "typo",
+                           "spelling", "lint", "format", "style", "docker", "infra",
+                           "workflow", "test", "coverage", "bump", "version", "lock"]
+
+        filtered = []
+        for commit in commits:
+            message = commit.get("commit", {}).get("message", "").lower()
+            if any(kw in message for kw in ignore_keywords):
+                continue
+
+            filtered.append({
+                "sha": commit.get("sha", ""),
+                "message": commit.get("commit", {}).get("message", ""),
+                "author": commit.get("commit", {}).get("author", {}).get("name", ""),
+                "html_url": commit.get("html_url", ""),
+                "committed_date": commit.get("commit", {}).get("committed_date", ""),
+            })
+
+        return filtered
+
+    @staticmethod
+    def _filter_issues(issues: list) -> list:
+        """轻量模式下过滤 issues：保留关键字段（不限制数量）。"""
+        filtered = []
+        for issue in issues:
+            filtered.append({
+                "number": issue.get("number"),
+                "title": issue.get("title", ""),
+                "state": issue.get("state", ""),
+                "comments": issue.get("comments", 0),
+                "user": issue.get("user", {}).get("login", ""),
+                "html_url": issue.get("html_url", ""),
+                "created_at": issue.get("created_at", ""),
+                "labels": issue.get("labels", []),
+            })
+        return filtered
+
+    @staticmethod
+    def _filter_prs(pull_requests: list) -> list:
+        """轻量模式下过滤 PRs：保留关键字段（不限制数量）。"""
+        filtered = []
+        for pr in pull_requests:
+            filtered.append({
+                "number": pr.get("number"),
+                "title": pr.get("title", ""),
+                "state": pr.get("state", ""),
+                "comments": pr.get("comments", 0) + pr.get("review_comments", 0),
+                "user": pr.get("user", {}).get("login", ""),
+                "html_url": pr.get("html_url", ""),
+                "created_at": pr.get("created_at", ""),
+                "merged_at": pr.get("merged_at", ""),
+                "labels": pr.get("labels", []),
+            })
+        return filtered
+
+    @staticmethod
+    def _filter_repo_info(info: dict) -> dict:
+        """轻量模式下过滤仓库信息：仅保留必要字段。"""
+        return {
+            "stargazers_count": info.get("stargazers_count", 0),
+            "forks_count": info.get("forks_count", 0),
+            "open_issues_count": info.get("open_issues_count", 0),
+            "description": info.get("description", ""),
+            "updated_at": info.get("updated_at", ""),
+        }
 
     def fetch_basic_stats(self) -> dict:
         """轻量获取：仅拉取各仓库 stars/forks/open_issues 统计。"""

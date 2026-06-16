@@ -1,10 +1,8 @@
 # LLM-Inference-Watch 🔍
 
-> 自动追踪主流 LLM 推理引擎开源仓库的最新动态，生成每日简报、每周深度报告和每月趋势总结。
+> 自动追踪主流 LLM 推理引擎开源仓库的最新动态，生成每日简报，并支持 AI 智能分析（按时间范围灵活分析）。
 
 [![Daily Report](https://github.com/your-username/llm-inference-watch/actions/workflows/daily.yml/badge.svg)](https://github.com/your-username/llm-inference-watch/actions/workflows/daily.yml)
-[![Weekly Report](https://github.com/your-username/llm-inference-watch/actions/workflows/weekly.yml/badge.svg)](https://github.com/your-username/llm-inference-watch/actions/workflows/weekly.yml)
-[![Monthly Report](https://github.com/your-username/llm-inference-watch/actions/workflows/monthly.yml/badge.svg)](https://github.com/your-username/llm-inference-watch/actions/workflows/monthly.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -25,19 +23,14 @@
 ### 🔍 每日简报 (Daily Brief)
 - 过去 24 小时各仓库新增 commits / issues / PRs 数量
 - 重要 PR 合并与新 Release 高亮
-- 一屏概览，快速了解当天动态
+- 每日自动生成并提交到 Git
 
-### 📰 每周深度报告 (Weekly Digest)
-- 本周关键变更深度解读（按仓库分类）
-- 社区讨论热点（高互动 issue/PR）
-- 贡献者活跃度排行
-- 跨仓库对比分析
-
-### 📊 每月趋势总结 (Monthly Review)
-- 月度关键指标趋势分析
-- 重大架构/特性变更回顾
-- 生态趋势洞察
-- 下月关注预测
+### 🤖 AI 深度分析报告 (AI Analysis)
+- 读取最近 N 天的数据进行深度分析（灵活选择时间范围）
+- 智能过滤非核心变更（CI/文档/测试等）
+- 提取推理引擎最新发展趋势
+- 跨仓库技术对比与生态预测
+- 支持 OpenAI/DeepSeek 等 API
 
 ---
 
@@ -53,26 +46,65 @@ cd llm-inference-watch
 # 安装依赖
 pip install -r requirements.txt
 
-# 设置 GitHub Token（可选，但强烈推荐以提高 API 速率限制）
-export GITHUB_TOKEN=your_github_token
+# 生成每日报告（自动保存数据到 data/daily/）
+python src/scheduler.py daily
 
-# 生成报告
-python src/scheduler.py daily      # 每日简报
-python src/scheduler.py weekly     # 每周深度报告
-python src/scheduler.py monthly    # 每月趋势总结
+# AI 深度分析（默认分析最近 7 天）
+python src/ai_scheduler.py analyze
+
+# AI 深度分析报告（分析最近 N 天）
+python src/ai_scheduler.py analyze --days 14
+
+# 列出可用的数据
+python src/ai_scheduler.py list
 ```
+
+> **提示**：详细的本地开发指南请查看 [AGENTS.md](AGENTS.md)。
 
 ### GitHub Actions 自动运行
 
-项目已配置 GitHub Actions，推送到 GitHub 后自动按以下节奏运行：
+项目已配置 GitHub Actions，每天 UTC 16:00（北京时间次日 00:00）自动运行：
 
-| 报告类型 | 执行时间 (UTC) | 执行时间 (北京时间) |
-|---------|---------------|-------------------|
-| 每日简报 | 每天 16:00 | 每天 00:00 |
-| 每周深度 | 每周一 00:00 | 每周一 08:00 |
-| 每月总结 | 每月 1 号 00:00 | 每月 1 号 08:00 |
+```yaml
+# .github/workflows/daily.yml
+on:
+  schedule:
+    - cron: "0 16 * * *"  # 每天 UTC 16:00
+  workflow_dispatch:  # 允许手动触发
+```
 
-> **注意：** 需要在仓库 Settings → Secrets and variables → Actions 中设置 `GITHUB_TOKEN` secret，或者使用 GitHub Actions 自动提供的 `${{ secrets.GITHUB_TOKEN }}`。
+---
+
+## 🔧 环境配置
+
+### 使用 .env 文件（推荐）
+
+创建 `.env` 文件，统一管理环境变量：
+
+```env
+# GitHub API Token（提高 API 速率限制）
+GITHUB_TOKEN=your-github-token
+
+# AI API 配置（支持 OpenAI、DeepSeek 等 OpenAI 兼容 API）
+AI_API_KEY=your-api-key
+AI_API_BASE=https://api.deepseek.com
+AI_MODEL=deepseek-v4-flash
+```
+
+> **本地代理**：如需本地代理访问 GitHub，通过环境变量设置，不要写入 .env 文件：
+> ```powershell
+> $env:HTTP_PROXY="http://127.0.0.1:7897"
+> $env:HTTPS_PROXY="http://127.0.0.1:7897"
+> ```
+
+### AI API 配置
+
+| API 提供商 | API_BASE | 模型名称 |
+|-----------|----------|---------|
+| DeepSeek | `https://api.deepseek.com` | `deepseek-v4-flash`, `deepseek-v4-pro` |
+| OpenAI | `https://api.openai.com/v1` | `gpt-4o`, `gpt-4-turbo` |
+
+> **注意：** DeepSeek 的 `deepseek-chat` 和 `deepseek-reasoner` 模型将于 2026/07/24 弃用，请使用新模型 `deepseek-v4-flash` 或 `deepseek-v4-pro`。
 
 ---
 
@@ -81,41 +113,31 @@ python src/scheduler.py monthly    # 每月趋势总结
 ```
 llm-inference-watch/
 ├── config/
-│   └── repos.yaml              # 监控仓库配置（可自定义添加仓库）
+│   └── repos.yaml              # 监控仓库配置
+├── data/
+│   └── daily/                  # 每日分析数据（用于 AI 分析）
+│       ├── 2026-06-09.json
+│       ├── 2026-06-10.json
+│       └── ...
 ├── src/
 │   ├── __init__.py
 │   ├── fetcher.py              # GitHub API 数据抓取
 │   ├── analyzer.py             # 数据分类与统计分析
-│   ├── reporter.py             # Markdown 报告生成（日/周/月）
-│   └── scheduler.py            # 调度入口
+│   ├── reporter.py             # Markdown 报告生成
+│   ├── scheduler.py            # 每日报告调度器
+│   ├── ai_analyzer.py          # AI 智能分析模块
+│   ├── ai_scheduler.py         # AI 分析调度器
+│   └── utils.py                # 通用工具
 ├── reports/
 │   ├── daily/                  # 每日简报存档
-│   ├── weekly/                 # 每周深度报告
-│   └── monthly/                # 每月趋势总结
+│   └── ai/                     # AI 分析报告存档
 ├── .github/workflows/
-│   ├── daily.yml               # 每日定时任务
-│   ├── weekly.yml              # 每周定时任务
-│   └── monthly.yml             # 每月定时任务
+│   └── daily.yml               # 每日定时任务
+├── .env                        # 环境变量配置
 ├── requirements.txt
 ├── .gitignore
 ├── LICENSE
 └── README.md
-```
-
----
-
-## 🔧 自定义配置
-
-编辑 `config/repos.yaml` 可添加或修改监控仓库：
-
-```yaml
-repos:
-  - vllm-project/vllm
-  - sgl-project/sglang
-  - NVIDIA/TensorRT-LLM
-  - ggerganov/llama.cpp
-  # 添加更多仓库...
-  # - your-org/your-repo
 ```
 
 ---
@@ -155,4 +177,5 @@ MIT License — 详见 [LICENSE](LICENSE) 文件。
 ## 🙏 致谢
 
 - 数据来源：[GitHub REST API](https://docs.github.com/en/rest)
+- AI 分析：支持 OpenAI、DeepSeek 等 API
 - 灵感来自各类开源生态观察项目

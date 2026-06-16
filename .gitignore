@@ -1,5 +1,5 @@
 # Python
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *.egg-info/
 dist/
@@ -7,8 +7,9 @@ build/
 .venv/
 venv/
 
-# 数据缓存（原始 API 响应，不纳入版本管理）
-data/
+# 数据缓存（临时数据，不纳入版本管理）
+# 注意：data/daily/ 目录会被提交到 Git，用于 AI 分析
+data/tmp/
 
 # IDE
 .vscode/
@@ -20,3 +21,6 @@ Thumbs.db
 
 # 环境变量（含 token）
 .env
+
+# Agent 使用指南（仅本地）
+AGENTS.md

@@ -3,22 +3,23 @@
     "vllm-project/vllm": {
       "name": "vllm-project/vllm",
       "info": {
-        "stars": 83443,
-        "forks": 18276,
-        "open_issues": 5482,
+        "stars": 83467,
+        "forks": 18281,
+        "open_issues": 5486,
         "description": "A high-throughput and memory-efficient inference and serving engine for LLMs"
       },
       "commits": {
-        "total": 16,
+        "total": 15,
         "by_category": {
-          "bug": 8,
-          "performance": 3,
-          "feature": 3,
+          "bug": 7,
+          "feature": 4,
+          "performance": 2,
           "other": 1,
           "model_support": 1
         },
         "top_authors": {
           "Tyler Michael Smith": 3,
+          "junkang1991": 1,
           "Shifani Rajabose": 1,
           "Ting SUN": 1,
           "Matt": 1,
@@ -26,32 +27,45 @@
           "aoshen02": 1,
           "aman": 1,
           "Jonathan Chen": 1,
-          "Varun Sundar Rabindranath": 1,
-          "Lucas Wilkinson": 1
+          "Varun Sundar Rabindranath": 1
         },
         "key_commits": []
       },
       "issues": {
-        "total": 64,
+        "total": 67,
         "by_category": {
-          "bug": 40,
+          "bug": 41,
           "feature": 10,
+          "other": 6,
           "ci_docs": 4,
-          "other": 4,
           "model_support": 3,
           "performance": 2,
           "community": 1
         },
         "notable": [
           {
+            "number": 38171,
+            "title": "[Feature]: Add TurboQuant Support for KV Cache Quantization",
+            "html_url": "https://github.com/vllm-project/vllm/issues/38171",
+            "user": "tunglinwood",
+            "comments": 48,
+            "state": "open"
+          },
+          {
             "number": 39479,
             "title": "[torch.compile] config hashing refactor follow-ups",
             "html_url": "https://github.com/vllm-project/vllm/issues/39479",
             "user": "vnadathur",
             "comments": 18,
-            "state": "open",
-            "ai_selected": true,
-            "ai_reason": "torch.compile config hashing refactor follow-ups，涉及 torch.compile 的改进，是动态编译优化的热点，讨论18条，尚未关闭"
+            "state": "open"
+          },
+          {
+            "number": 41733,
+            "title": "[Roadmap] 2026 Q2 vLLM × RL Roadmap",
+            "html_url": "https://github.com/vllm-project/vllm/issues/41733",
+            "user": "aoshen02",
+            "comments": 15,
+            "state": "open"
           },
           {
             "number": 40076,
@@ -59,9 +73,7 @@
             "html_url": "https://github.com/vllm-project/vllm/issues/40076",
             "user": "nv-nedelman-1",
             "comments": 14,
-            "state": "open",
-            "ai_selected": true,
-            "ai_reason": "Feature request for per-request timing metrics in response body，是性能监控和可观测性的重要功能，讨论活跃（14条），符合技术趋势"
+            "state": "open"
           },
           {
             "number": 31249,
@@ -110,40 +122,24 @@
             "user": "chaunceyjiang",
             "comments": 4,
             "state": "closed"
-          },
-          {
-            "number": 35387,
-            "title": "[Performance]: MTP causes 76% latency regression on Qwen3-Next-80B-A3B-Instruct-FP8",
-            "html_url": "https://github.com/vllm-project/vllm/issues/35387",
-            "user": "tdoublep",
-            "comments": 4,
-            "state": "open"
-          },
-          {
-            "number": 36784,
-            "title": "[New Model]: OmniASR by meta",
-            "html_url": "https://github.com/vllm-project/vllm/issues/36784",
-            "user": "HDprojec8s",
-            "comments": 3,
-            "state": "open"
           }
         ]
       },
       "pull_requests": {
-        "total": 229,
-        "merged": 22,
-        "open": 178,
-        "closed": 29,
+        "total": 231,
+        "merged": 20,
+        "open": 181,
+        "closed": 30,
         "by_category": {
-          "bug": 108,
-          "feature": 34,
+          "bug": 112,
+          "feature": 37,
           "ci_docs": 30,
-          "performance": 26,
-          "other": 21,
-          "model_support": 6,
+          "performance": 25,
+          "other": 17,
+          "model_support": 5,
+          "distributed": 2,
           "kernel": 2,
-          "api": 1,
-          "distributed": 1
+          "api": 1
         },
         "notable": [
           {
@@ -151,11 +147,9 @@
             "title": "[Feature] TRITON_MLA_SPARSE backend for SM8x/11x/12x DSA Sparse MLA Support",
             "html_url": "https://github.com/vllm-project/vllm/pull/38476",
             "user": "haosdent",
-            "comments": 155,
+            "comments": 156,
             "state": "open",
-            "category": "ci_docs",
-            "ai_selected": true,
-            "ai_reason": "TRITON_MLA_SPARSE backend for sparse MLA: 稀疏注意力Kernel优化，支持多代GPU，性能提升关键。"
+            "category": "ci_docs"
           },
           {
             "number": 42136,
@@ -164,9 +158,7 @@
             "user": "vrdn-23",
             "comments": 25,
             "state": "open",
-            "category": "performance",
-            "ai_selected": true,
-            "ai_reason": "将 vllm/envs.py 重构为 pydantic-settings，提升环境变量声明的可维护性和类型安全，讨论25条，属于工程基础设施优化趋势"
+            "category": "performance"
           },
           {
             "number": 45026,
@@ -187,13 +179,13 @@
             "category": "api"
           },
           {
-            "number": 41850,
-            "title": "platforms: handle MIG device UUID in device_id_to_physical_device_id",
-            "html_url": "https://github.com/vllm-project/vllm/pull/41850",
-            "user": "fede-kamel",
-            "comments": 14,
+            "number": 43081,
+            "title": "[SpecDecode] Support DFlash with FlashInfer ",
+            "html_url": "https://github.com/vllm-project/vllm/pull/43081",
+            "user": "gq112",
+            "comments": 13,
             "state": "open",
-            "category": "other"
+            "category": "ci_docs"
           },
           {
             "number": 44822,
@@ -202,15 +194,6 @@
             "user": "ajayr4j",
             "comments": 12,
             "state": "open",
-            "category": "feature"
-          },
-          {
-            "number": 45413,
-            "title": "[Frontend] Add Streaming Parser Engine and new Qwen3 Parser",
-            "html_url": "https://github.com/vllm-project/vllm/pull/45413",
-            "user": "bbrowning",
-            "comments": 12,
-            "state": "merged",
             "category": "feature"
           },
           {
@@ -239,6 +222,15 @@
             "comments": 9,
             "state": "open",
             "category": "feature"
+          },
+          {
+            "number": 33631,
+            "title": "Bump Containers to Ubuntu 24.04",
+            "html_url": "https://github.com/vllm-project/vllm/pull/33631",
+            "user": "zaristei2",
+            "comments": 9,
+            "state": "closed",
+            "category": "ci_docs"
           }
         ]
       },
@@ -249,22 +241,22 @@
     "repos": [
       {
         "name": "vllm-project/vllm",
-        "stars": 83443,
-        "commits": 16,
-        "issues": 64,
-        "prs": 229,
-        "prs_merged": 22,
+        "stars": 83467,
+        "commits": 15,
+        "issues": 67,
+        "prs": 231,
+        "prs_merged": 20,
         "releases": 0
       }
     ],
     "totals": {
-      "stars": 83443,
-      "commits": 16,
-      "issues": 64,
-      "prs": 229,
+      "stars": 83467,
+      "commits": 15,
+      "issues": 67,
+      "prs": 231,
       "releases": 0
     }
   },
   "date": "2026-06-21",
-  "generated_at": "2026-06-21T08:43:54.825058+00:00"
+  "generated_at": "2026-06-21T14:35:25.176078+00:00"
 }

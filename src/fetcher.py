@@ -115,23 +115,43 @@ class GitHubFetcher:
     # ─── Pull Requests ─────────────────────────────────────
 
     def get_pull_requests(self, owner: str, repo: str, since: Optional[datetime] = None) -> list:
-        """获取 pull requests。"""
-        url = f"{self.BASE_URL}/repos/{owner}/{repo}/pulls"
-        params = {"state": "all", "sort": "updated", "direction": "desc"}
-        # GitHub PR API 不支持 since 参数，我们手动分页过滤
-        all_prs = self._paginate(url, params)
-
+        """获取 pull requests（合并 PR API 和 Issues API 数据）。
+        
+        PR API 返回 merged_at 但不返回 comments。
+        Issues API 返回 comments 但 merged_at 为 null。
+        所以合并两个数据源。
+        """
+        # 1. 从 PR API 获取 PR 列表（包含 merged_at）
+        pr_url = f"{self.BASE_URL}/repos/{owner}/{repo}/pulls"
+        pr_params = {"state": "all", "sort": "updated", "direction": "desc"}
+        prs_from_api = self._paginate(pr_url, pr_params)
+        
+        # 2. 从 Issues API 获取 PR 的 comments
+        issues_url = f"{self.BASE_URL}/repos/{owner}/{repo}/issues"
+        issues_params = {"state": "all", "sort": "updated", "direction": "desc"}
+        all_issues = self._paginate(issues_url, issues_params)
+        prs_from_issues = {i["number"]: i for i in all_issues if "pull_request" in i}
+        
+        # 3. 合并数据：PR API 的 merged_at + Issues API 的 comments
+        merged_prs = []
+        for pr in prs_from_api:
+            pr_number = pr.get("number")
+            issue_data = prs_from_issues.get(pr_number, {})
+            merged_pr = {
+                **pr,
+                "comments": issue_data.get("comments", 0),
+            }
+            merged_prs.append(merged_pr)
+        
+        # 4. 时间过滤
         if since:
             since_iso = since.isoformat()
             filtered = []
-            for pr in all_prs:
+            for pr in merged_prs:
                 if pr.get("updated_at", "") >= since_iso or pr.get("created_at", "") >= since_iso:
                     filtered.append(pr)
-                else:
-                    # 按更新时间降序排列，一旦遇到早于 since 的就停止
-                    break
             return filtered
-        return all_prs
+        return merged_prs
 
     # ─── Releases ──────────────────────────────────────────
 

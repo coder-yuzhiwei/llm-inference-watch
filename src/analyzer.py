@@ -122,6 +122,7 @@ class Analyzer:
             cat = self.classifier.classify_pr(pr)
             pr_categories[cat] += 1
 
+            # PR API 返回 merged_at 字段
             if pr.get("merged_at"):
                 pr_merged += 1
             elif pr.get("state") == "open":
@@ -129,8 +130,8 @@ class Analyzer:
             else:
                 pr_closed += 1
 
-            # 标记高互动 PR
-            comments = pr.get("comments", 0) + pr.get("review_comments", 0)
+            # 标记高互动 PR（comments 来自 Issues API）
+            comments = pr.get("comments", 0)
             if comments >= 5:
                 user = pr.get("user", "")
                 if isinstance(user, dict):

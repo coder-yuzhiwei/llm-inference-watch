@@ -1,4 +1,4 @@
-"""AI 分析调度器：读取最近 N 天的分析数据进行深度分析"""
+"""AI 分析调度器：两步分析流程"""
 
 import os
 import sys
@@ -9,6 +9,7 @@ from typing import List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from src.fetcher import GitHubFetcher
 from src.ai_analyzer import AIAnalyzer, DataAnalyzer
 
 logging.basicConfig(
@@ -143,9 +144,53 @@ def merge_analysis_results(data_files: List[str]) -> Dict:
     return merged
 
 
+def fetch_selected_details(selection: Dict, fetcher: GitHubFetcher) -> Dict:
+    """获取选中的 issue/PR 的详细信息。"""
+    detailed_data = {}
+
+    for repo_name, items in selection.items():
+        owner, repo = repo_name.split("/")
+        detailed_data[repo_name] = {"issues": [], "prs": []}
+
+        for item in items.get("issues", []):
+            number = item.get("number")
+            reason = item.get("reason", "")
+            detail = fetcher.get_issue_detail(owner, repo, number)
+            if detail:
+                detailed_data[repo_name]["issues"].append({
+                    "number": number,
+                    "title": detail.get("title"),
+                    "body": detail.get("body", "")[:1000],
+                    "comments_count": detail.get("comments", 0),
+                    "reason": reason,
+                })
+
+        for item in items.get("prs", []):
+            number = item.get("number")
+            reason = item.get("reason", "")
+            detail = fetcher.get_pr_detail(owner, repo, number)
+            if detail:
+                detailed_data[repo_name]["prs"].append({
+                    "number": number,
+                    "title": detail.get("title"),
+                    "body": detail.get("body", "")[:1000],
+                    "comments_count": detail.get("comments", 0),
+                    "merged": bool(detail.get("merged_at")),
+                    "additions": detail.get("additions", 0),
+                    "deletions": detail.get("deletions", 0),
+                    "reason": reason,
+                })
+
+    return detailed_data
+
+
 def analyze(days: int = 7):
-    """分析最近 N 天的数据。"""
-    logger.info("Looking for data files from the last %d days...", days)
+    """执行两步 AI 分析流程。"""
+    logger.info("=" * 50)
+    logger.info("Two-step AI analysis (last %d days)", days)
+
+    # Step 1: 收集数据
+    logger.info("Step 1: Collecting data...")
     data_files = get_recent_data_files(days)
 
     if not data_files:
@@ -160,9 +205,60 @@ def analyze(days: int = 7):
     logger.info("Merging analysis results...")
     merged_data = merge_analysis_results(data_files)
 
-    logger.info("Starting AI analysis...")
+    date_range = merged_data["date_range"]
+    logger.info("Date range: %s to %s (%d days)",
+                date_range["start"], date_range["end"], date_range["days"])
+
+    # Step 2: AI 筛选
+    logger.info("=" * 50)
+    logger.info("Step 2: AI filtering (select items to investigate)...")
+
     analyzer = AIAnalyzer()
-    result = analyzer.analyze_from_merged_data(merged_data)
+
+    # 构建筛选用的数据（只有标题）
+    filter_data = {
+        "repos": {},
+        "date_range": f"{date_range['start']} ~ {date_range['end']}",
+        "days": date_range["days"]
+    }
+
+    for repo_name, repo_data in merged_data["analysis_results"].items():
+        filter_data["repos"][repo_name] = {
+            "issues": repo_data["issues"].get("notable", [])[:10],
+            "prs": repo_data["pull_requests"].get("notable", [])[:10],
+            "commits": repo_data["commits"].get("key_commits", [])[:10],
+            "releases": repo_data["releases"][:3],
+            "category_distribution": repo_data["commits"].get("by_category", {}),
+        }
+
+    # 调用 AI 筛选
+    selection = analyzer.filter_items(filter_data)
+
+    if not selection:
+        logger.error("AI filtering failed or returned no results")
+        sys.exit(1)
+
+    logger.info("AI selected items:")
+    for repo, items in selection.items():
+        logger.info("  %s: %d issues, %d PRs",
+                    repo,
+                    len(items.get("issues", [])),
+                    len(items.get("prs", [])))
+
+    # Step 3: 获取详情
+    logger.info("=" * 50)
+    logger.info("Step 3: Fetching details for selected items...")
+
+    fetcher = GitHubFetcher()
+    detailed_data = fetch_selected_details(selection, fetcher)
+
+    logger.info("Fetched details for %d repos", len(detailed_data))
+
+    # Step 4: AI 生成报告
+    logger.info("=" * 50)
+    logger.info("Step 4: AI generating final report...")
+
+    result = analyzer.generate_report(merged_data, detailed_data)
 
     if result.get("success"):
         date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -170,12 +266,9 @@ def analyze(days: int = 7):
 
         logger.info("=" * 50)
         logger.info("AI analysis completed successfully!")
-        logger.info("  Date range: %s to %s (%d days)",
-                   merged_data["date_range"]["start"],
-                   merged_data["date_range"]["end"],
-                   merged_data["date_range"]["days"])
+        logger.info("  Date range: %s ~ %s (%d days)",
+                    date_range["start"], date_range["end"], date_range["days"])
         logger.info("  Report: %s", filepath)
-        logger.info("  Mode: %s", result.get("mode", "AI"))
 
         return filepath
     else:

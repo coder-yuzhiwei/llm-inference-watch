@@ -80,6 +80,24 @@ class GitHubFetcher:
 
         return all_items
 
+    def _get(self, url: str, params: dict) -> dict:
+        """单次 GET 请求，返回 JSON 数据。"""
+        resp = self.session.get(url, params=params)
+        
+        if resp.status_code == 403 and "rate limit" in resp.text.lower():
+            reset_time = int(resp.headers.get("X-RateLimit-Reset", 0))
+            wait = max(reset_time - time.time(), 0) + 5
+            logger.warning("Rate limit hit, waiting %d seconds...", wait)
+            time.sleep(wait)
+            resp = self.session.get(url, params=params)
+        
+        if resp.status_code == 404:
+            logger.warning("Resource not found: %s", url)
+            return None
+        
+        resp.raise_for_status()
+        return resp.json()
+
     # ─── 仓库基本信息 ──────────────────────────────────────
 
     def get_repo_info(self, owner: str, repo: str) -> dict:
@@ -165,6 +183,32 @@ class GitHubFetcher:
             return [r for r in all_releases
                     if r.get("published_at", "") >= since.isoformat()]
         return all_releases
+
+    # ─── 单条详情获取 ───────────────────────────────────────
+
+    def get_issue_detail(self, owner: str, repo: str, number: int) -> dict:
+        """获取单条 issue 的详细信息（包含 body 和 comments）。"""
+        url = f"{self.BASE_URL}/repos/{owner}/{repo}/issues/{number}"
+        params = {}
+        issue = self._get(url, params)
+        
+        if issue and "pull_request" not in issue:
+            return issue
+        return None
+
+    def get_pr_detail(self, owner: str, repo: str, number: int) -> dict:
+        """获取单条 PR 的详细信息（包含 body、comments 和 review comments）。"""
+        url = f"{self.BASE_URL}/repos/{owner}/{repo}/pulls/{number}"
+        params = {}
+        pr = self._get(url, params)
+        
+        if pr:
+            comments_url = f"{self.BASE_URL}/repos/{owner}/{repo}/issues/{number}/comments"
+            pr["issue_comments"] = self._paginate(comments_url, {})
+            reviews_url = f"{self.BASE_URL}/repos/{owner}/{repo}/pulls/{number}/reviews"
+            pr["reviews"] = self._paginate(reviews_url, {})
+        
+        return pr
 
     # ─── 批量获取 ──────────────────────────────────────────
 

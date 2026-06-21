@@ -44,7 +44,6 @@ class DataAnalyzer:
                 "releases": [],
             }
 
-            # 提取关键 commits（过滤掉 CI/Docs 等）
             key_commits = repo_data.get("commits", {}).get("key_commits", [])
             for commit in key_commits[:10]:
                 message = commit.get("message", "")
@@ -57,7 +56,6 @@ class DataAnalyzer:
                         "category": self._classify_commit(message),
                     })
 
-            # 提取高互动 PR
             notable_prs = repo_data.get("pull_requests", {}).get("notable", [])
             for pr in notable_prs[:5]:
                 if pr.get("comments", 0) >= 5 or pr.get("state") == "merged":
@@ -71,7 +69,6 @@ class DataAnalyzer:
                         "category": pr.get("category", ""),
                     })
 
-            # 提取高互动 issues
             notable_issues = repo_data.get("issues", {}).get("notable", [])
             for issue in notable_issues[:5]:
                 if issue.get("comments", 0) >= 10:
@@ -84,13 +81,11 @@ class DataAnalyzer:
                         "state": issue.get("state", ""),
                     })
 
-            # 类别分布（过滤掉不重要的类别）
             categories = repo_data.get("commits", {}).get("by_category", {})
             for cat, count in categories.items():
                 if cat not in self.IGNORED_CATEGORIES:
                     repo_notable["category_distribution"][cat] = count
 
-            # Releases
             releases = repo_data.get("releases", [])
             for rel in releases[:3]:
                 repo_notable["releases"].append({
@@ -172,7 +167,6 @@ class AIAnalyzer:
 
         week_num = report_date.isocalendar()[1]
 
-        # 提取值得关注的变更
         notable_data = self.data_analyzer.extract_notable_changes(analysis_results)
         notable_data["date"] = report_date.strftime("%Y-%m-%d")
         notable_data["week"] = str(week_num)
@@ -193,7 +187,6 @@ class AIAnalyzer:
         end_date = date_range.get("end", "")
         days = date_range.get("days", 0)
 
-        # 提取值得关注的变更
         notable_data = self.data_analyzer.extract_notable_changes(analysis_results)
         notable_data["date"] = end_date
         notable_data["date_range"] = f"{start_date} ~ {end_date}"
@@ -205,6 +198,159 @@ class AIAnalyzer:
             return self._mock_analysis(notable_data)
 
         return self._call_ai_analysis(notable_data)
+
+    def filter_items(self, filter_data: Dict) -> Dict:
+        """Step 1: AI 筛选值得深入了解的 issue/PR。"""
+        template_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "config", "prompts", "step1_filter.txt"
+        )
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = f.read()
+
+        repo_data_text = ""
+        for repo_name, data in filter_data["repos"].items():
+            repo_data_text += f"\n### {repo_name}\n\n"
+
+            if data.get("issues"):
+                repo_data_text += "**高互动 Issues：**\n"
+                for i in data["issues"]:
+                    repo_data_text += f"- #{i['number']}: {i['title']} (💬{i['comments']})\n"
+                repo_data_text += "\n"
+
+            if data.get("prs"):
+                repo_data_text += "**高互动 PRs：**\n"
+                for pr in data["prs"]:
+                    state = "✅ merged" if pr.get("state") == "merged" else "🔄 open"
+                    repo_data_text += f"- #{pr['number']}: {pr['title']} ({state}, 💬{pr['comments']})\n"
+                repo_data_text += "\n"
+
+            if data.get("commits"):
+                repo_data_text += "**关键 Commits：**\n"
+                for c in data["commits"][:5]:
+                    repo_data_text += f"- [{c['sha'][:7]}] {c['message'][:80]} ({c.get('category', 'other')})\n"
+                repo_data_text += "\n"
+
+            if data.get("category_distribution"):
+                cats = ", ".join([f"{k}:{v}" for k, v in data["category_distribution"].items()])
+                repo_data_text += f"**类别分布：** {cats}\n\n"
+
+        prompt = template.replace("{REPO_DATA}", repo_data_text)
+
+        if not self.api_key:
+            logger.warning("No AI API key, returning empty selection")
+            return {}
+
+        try:
+            import openai
+            client = openai.OpenAI(
+                api_key=self.api_key,
+                base_url=self.api_base if self.api_base else None,
+            )
+
+            logger.info("Calling AI for item selection...")
+            response = client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.3,
+                max_tokens=2048,
+            )
+
+            result_text = response.choices[0].message.content.strip()
+
+            json_match = re.search(r'\{[\s\S]*\}', result_text)
+            if json_match:
+                return json.loads(json_match.group())
+
+            return {}
+
+        except Exception as e:
+            logger.error("AI filtering failed: %s", e)
+            return {}
+
+    def generate_report(self, merged_data: Dict, detailed_data: Dict) -> Dict:
+        """Step 2: 基于真实详情生成最终报告。"""
+        template_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "config", "prompts", "step2_analyze.txt"
+        )
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = f.read()
+
+        date_range = merged_data["date_range"]
+        date_range_str = f"{date_range['start']} ~ {date_range['end']}"
+        days = date_range["days"]
+
+        stats_data = ""
+        for repo_name, repo_data in merged_data["analysis_results"].items():
+            stats_data += f"\n### {repo_name}\n"
+            commits = repo_data["commits"]
+            prs = repo_data["pull_requests"]
+            stats_data += f"- Commits: {commits['total']} ("
+            cats = [f"{k}:{v}" for k, v in commits.get("by_category", {}).items()]
+            stats_data += ", ".join(cats) + ")\n"
+            stats_data += f"- PRs: {prs['total']} (merged: {prs['merged']}, open: {prs['open']})\n"
+            stats_data += f"- Issues: {repo_data['issues']['total']}\n"
+
+        detailed_text = ""
+        for repo_name, items in detailed_data.items():
+            detailed_text += f"\n### {repo_name}\n\n"
+
+            if items.get("issues"):
+                detailed_text += "**深入分析的 Issues：**\n"
+                for issue in items["issues"]:
+                    detailed_text += f"- #{issue['number']}: {issue['title']}\n"
+                    detailed_text += f"  原因: {issue.get('reason', 'N/A')}\n"
+                    if issue.get("body"):
+                        detailed_text += f"  内容: {issue['body'][:300]}...\n"
+                    detailed_text += "\n"
+
+            if items.get("prs"):
+                detailed_text += "**深入分析的 PRs：**\n"
+                for pr in items["prs"]:
+                    state = "✅ merged" if pr.get("merged") else "🔄 open"
+                    detailed_text += f"- #{pr['number']}: {pr['title']} ({state})\n"
+                    detailed_text += f"  原因: {pr.get('reason', 'N/A')}\n"
+                    if pr.get("body"):
+                        detailed_text += f"  内容: {pr['body'][:300]}...\n"
+                    detailed_text += "\n"
+
+        prompt = template.replace("{DATE_RANGE}", date_range_str).replace("{DAYS}", str(days)).replace("{STATS_DATA}", stats_data).replace("{DETAILED_DATA}", detailed_text)
+
+        if not self.api_key:
+            logger.warning("No AI API key, using mock")
+            return {"success": True, "content": "# 模拟报告\n\n(请设置 AI_API_KEY 环境变量)"}
+
+        try:
+            import openai
+            client = openai.OpenAI(
+                api_key=self.api_key,
+                base_url=self.api_base if self.api_base else None,
+            )
+
+            logger.info("Calling AI for final report...")
+            response = client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "你是一个资深的 LLM 推理引擎技术分析师。"},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.3,
+                max_tokens=4096,
+            )
+
+            return {
+                "success": True,
+                "content": response.choices[0].message.content.strip(),
+                "date": date_range_str,
+                "mode": "AI",
+            }
+
+        except Exception as e:
+            logger.error("AI report generation failed: %s", e)
+            return {"success": False, "error": str(e)}
 
     def _build_prompt(self, notable_data: Dict) -> str:
         """构建 AI 分析的 prompt，从模板文件加载。"""
@@ -383,9 +529,9 @@ class AIAnalyzer:
         for f in files:
             if report_type == "weekly" and "-W" in f:
                 filtered.append(os.path.join(data_dir, f))
-            elif report_type == "daily" and "-W" not in f and len(f) == 15:  # YYYY-MM-DD.json
+            elif report_type == "daily" and "-W" not in f and len(f) == 15:
                 filtered.append(os.path.join(data_dir, f))
-            elif report_type == "monthly" and len(f) == 11:  # YYYY-MM.json
+            elif report_type == "monthly" and len(f) == 11:
                 filtered.append(os.path.join(data_dir, f))
 
         return filtered if filtered else [os.path.join(data_dir, f) for f in files]

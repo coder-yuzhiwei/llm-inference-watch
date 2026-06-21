@@ -70,7 +70,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │  Step 2: AI 筛选（第一步调用 AI）                               │
 │  - 构建筛选数据（只有标题，按配置 input_limit 限制）              │
-│  - AI 返回选中的 issue/PR 编号和理由                             │
+│  - AI 返回选中的 issue/PR 编号和理由                            │
 │  - 将 ai_selected 标记写回 daily JSON 文件                       │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -125,8 +125,6 @@ python src/ai_scheduler.py analyze --days 14
 python src/ai_scheduler.py list
 ```
 
-> **提示**：详细的本地开发指南请查看 [AGENTS.md](AGENTS.md)。
-
 ### GitHub Actions 自动运行
 
 项目已配置 GitHub Actions，每天 UTC 16:00（北京时间次日 00:00）自动运行：
@@ -151,7 +149,7 @@ on:
 # GitHub API Token（提高 API 速率限制）
 GITHUB_TOKEN=your-github-token
 
-# AI API 配置（支持 OpenAI、DeepSeek 等 OpenAI 兼容 API）
+# AI API 配置
 AI_API_KEY=your-api-key
 AI_API_BASE=https://api.deepseek.com
 AI_MODEL=deepseek-v4-flash
@@ -168,7 +166,6 @@ AI_MODEL=deepseek-v4-flash
 | API 提供商 | API_BASE | 模型名称 |
 |-----------|----------|---------|
 | DeepSeek | `https://api.deepseek.com` | `deepseek-v4-flash`, `deepseek-v4-pro` |
-| OpenAI | `https://api.openai.com/v1` | `gpt-4o`, `gpt-4-turbo` |
 
 > **注意：** DeepSeek 的 `deepseek-chat` 和 `deepseek-reasoner` 模型将于 2026/07/24 弃用，请使用新模型 `deepseek-v4-flash` 或 `deepseek-v4-pro`。
 
@@ -260,5 +257,5 @@ MIT License — 详见 [LICENSE](LICENSE) 文件。
 ## 🙏 致谢
 
 - 数据来源：[GitHub REST API](https://docs.github.com/en/rest)
-- AI 分析：支持 OpenAI、DeepSeek 等 API
+- AI 分析：支持 DeepSeek API
 - 灵感来自各类开源生态观察项目

@@ -132,7 +132,7 @@ class Analyzer:
 
             # 标记高互动 PR（comments 来自 Issues API，过滤 bug 类）
             comments = pr.get("comments", 0)
-            if comments >= 5 and cat != "bug":
+            if comments >= 3 and cat != "bug":
                 user = pr.get("user", "")
                 if isinstance(user, dict):
                     user = user.get("login", "")

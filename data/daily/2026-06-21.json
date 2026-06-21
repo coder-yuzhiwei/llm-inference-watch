@@ -36,21 +36,13 @@
         "by_category": {
           "bug": 40,
           "feature": 10,
-          "other": 4,
           "ci_docs": 4,
+          "other": 4,
           "model_support": 3,
           "performance": 2,
           "community": 1
         },
         "notable": [
-          {
-            "number": 32637,
-            "title": "[Bug]: vllm启动GLM-4.7-Flash失败",
-            "html_url": "https://github.com/vllm-project/vllm/issues/32637",
-            "user": "TZJ12",
-            "comments": 23,
-            "state": "closed"
-          },
           {
             "number": 39479,
             "title": "[torch.compile] config hashing refactor follow-ups",
@@ -60,27 +52,11 @@
             "state": "open"
           },
           {
-            "number": 35021,
-            "title": "[Bug]: GLM-5（Sparse MLA / DSA 模型）无法在 sm80 GPU（A100/A800）上运行 — DeepGemm 硬依赖无 fallback",
-            "html_url": "https://github.com/vllm-project/vllm/issues/35021",
-            "user": "qjxjy123",
-            "comments": 17,
-            "state": "closed"
-          },
-          {
             "number": 40076,
             "title": "[Feature]: Per-request timing metrics in response body",
             "html_url": "https://github.com/vllm-project/vllm/issues/40076",
             "user": "nv-nedelman-1",
             "comments": 14,
-            "state": "open"
-          },
-          {
-            "number": 35048,
-            "title": "[Bug]: perf degradation between vllm 0.14.0 to 0.15.1",
-            "html_url": "https://github.com/vllm-project/vllm/issues/35048",
-            "user": "meitalbensinai",
-            "comments": 13,
             "state": "open"
           },
           {
@@ -92,14 +68,6 @@
             "state": "open"
           },
           {
-            "number": 35031,
-            "title": "[Bug]: MTP Speculative Decoding with NVFP4: Weight Shape Mismatch",
-            "html_url": "https://github.com/vllm-project/vllm/issues/35031",
-            "user": "eleqtrizit",
-            "comments": 8,
-            "state": "open"
-          },
-          {
             "number": 45861,
             "title": "[Feature]: Performance Optimization for Deepseek V4",
             "html_url": "https://github.com/vllm-project/vllm/issues/45861",
@@ -108,31 +76,63 @@
             "state": "open"
           },
           {
-            "number": 43626,
-            "title": "[Bug]: AssertionError at kv_cache_utils.py:1042 — dense draft model + hybrid-attention main (DeltaNet+SWA) fails in unify_kv_cache_spec_page_size",
-            "html_url": "https://github.com/vllm-project/vllm/issues/43626",
-            "user": "DoradusResearch",
+            "number": 32569,
+            "title": "[Feature]: Support GPU UUID in `CUDA_VISIBLE_DEVICES`",
+            "html_url": "https://github.com/vllm-project/vllm/issues/32569",
+            "user": "Zerohertz",
+            "comments": 7,
+            "state": "closed"
+          },
+          {
+            "number": 41286,
+            "title": "[Feature]: Migration from Model Runner v1 to Model Runner v2",
+            "html_url": "https://github.com/vllm-project/vllm/issues/41286",
+            "user": "yewentao256",
             "comments": 7,
             "state": "open"
           },
           {
-            "number": 33672,
-            "title": "[Bug]: HTTP API multimodal embedding causes image_pad token duplication, producing incorrect results",
-            "html_url": "https://github.com/vllm-project/vllm/issues/33672",
-            "user": "ojipadeson",
-            "comments": 7,
+            "number": 32200,
+            "title": "[RFC]: Change `kv_load_failure_policy` Default from \"recompute\" to \"fail\"",
+            "html_url": "https://github.com/vllm-project/vllm/issues/32200",
+            "user": "NickLucche",
+            "comments": 5,
             "state": "closed"
+          },
+          {
+            "number": 33381,
+            "title": "[RFC]: Align with the openresponses spec.",
+            "html_url": "https://github.com/vllm-project/vllm/issues/33381",
+            "user": "chaunceyjiang",
+            "comments": 4,
+            "state": "closed"
+          },
+          {
+            "number": 35387,
+            "title": "[Performance]: MTP causes 76% latency regression on Qwen3-Next-80B-A3B-Instruct-FP8",
+            "html_url": "https://github.com/vllm-project/vllm/issues/35387",
+            "user": "tdoublep",
+            "comments": 4,
+            "state": "open"
+          },
+          {
+            "number": 36784,
+            "title": "[New Model]: OmniASR by meta",
+            "html_url": "https://github.com/vllm-project/vllm/issues/36784",
+            "user": "HDprojec8s",
+            "comments": 3,
+            "state": "open"
           }
         ]
       },
       "pull_requests": {
-        "total": 228,
+        "total": 229,
         "merged": 22,
-        "open": 177,
+        "open": 178,
         "closed": 29,
         "by_category": {
           "bug": 108,
-          "feature": 33,
+          "feature": 34,
           "ci_docs": 30,
           "performance": 26,
           "other": 21,
@@ -142,15 +142,6 @@
           "distributed": 1
         },
         "notable": [
-          {
-            "number": 41834,
-            "title": "[New Model][Nvidia] Add SM12x support for DeepSeek V4 Flash with essential fixes",
-            "html_url": "https://github.com/vllm-project/vllm/pull/41834",
-            "user": "jasl",
-            "comments": 261,
-            "state": "open",
-            "category": "bug"
-          },
           {
             "number": 38476,
             "title": "[Feature] TRITON_MLA_SPARSE backend for SM8x/11x/12x DSA Sparse MLA Support",
@@ -170,15 +161,6 @@
             "category": "performance"
           },
           {
-            "number": 32630,
-            "title": "[ROCm][Bugfix] Resolve request_id mismatch and prevent crashes in Disaggregated Serving for moriio kv-connector",
-            "html_url": "https://github.com/vllm-project/vllm/pull/32630",
-            "user": "jane-jhu",
-            "comments": 18,
-            "state": "closed",
-            "category": "bug"
-          },
-          {
             "number": 45026,
             "title": "Stop setting CUDA_VISIBLE_DEVICES internally in vLLM, add device_ids arg",
             "html_url": "https://github.com/vllm-project/vllm/pull/45026",
@@ -186,24 +168,6 @@
             "comments": 18,
             "state": "merged",
             "category": "feature"
-          },
-          {
-            "number": 45919,
-            "title": "[Render] Add reasoning/tool parsing to /derender + fix byte-fallback FFFD",
-            "html_url": "https://github.com/vllm-project/vllm/pull/45919",
-            "user": "aoshen02",
-            "comments": 17,
-            "state": "merged",
-            "category": "bug"
-          },
-          {
-            "number": 44297,
-            "title": "[Bugfix][Structured Output][Spec Decode] Constrain bitmask and trim grammar advance at the reasoning boundary",
-            "html_url": "https://github.com/vllm-project/vllm/pull/44297",
-            "user": "yuyue0225sc",
-            "comments": 16,
-            "state": "open",
-            "category": "bug"
           },
           {
             "number": 40912,
@@ -231,6 +195,42 @@
             "comments": 12,
             "state": "open",
             "category": "feature"
+          },
+          {
+            "number": 45413,
+            "title": "[Frontend] Add Streaming Parser Engine and new Qwen3 Parser",
+            "html_url": "https://github.com/vllm-project/vllm/pull/45413",
+            "user": "bbrowning",
+            "comments": 12,
+            "state": "merged",
+            "category": "feature"
+          },
+          {
+            "number": 33537,
+            "title": "[Core] Add determinism warmup automation for batch invariant mode",
+            "html_url": "https://github.com/vllm-project/vllm/pull/33537",
+            "user": "debo3",
+            "comments": 10,
+            "state": "closed",
+            "category": "ci_docs"
+          },
+          {
+            "number": 41457,
+            "title": "[Perf] Fuse Qwen3.5 GDN in_proj_ba into 6-way in_proj MergedColumnParallelLinear",
+            "html_url": "https://github.com/vllm-project/vllm/pull/41457",
+            "user": "jhsmith409",
+            "comments": 10,
+            "state": "open",
+            "category": "performance"
+          },
+          {
+            "number": 44573,
+            "title": "Add DeepSeek-V4  DCP decode support",
+            "html_url": "https://github.com/vllm-project/vllm/pull/44573",
+            "user": "baonudesifeizhai",
+            "comments": 9,
+            "state": "open",
+            "category": "feature"
           }
         ]
       },
@@ -244,7 +244,7 @@
         "stars": 83443,
         "commits": 16,
         "issues": 64,
-        "prs": 228,
+        "prs": 229,
         "prs_merged": 22,
         "releases": 0
       }
@@ -253,10 +253,10 @@
       "stars": 83443,
       "commits": 16,
       "issues": 64,
-      "prs": 228,
+      "prs": 229,
       "releases": 0
     }
   },
   "date": "2026-06-21",
-  "generated_at": "2026-06-21T08:33:47.606935+00:00"
+  "generated_at": "2026-06-21T08:43:54.825058+00:00"
 }

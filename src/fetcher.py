@@ -168,15 +168,18 @@ class GitHubFetcher:
 
     # ─── 批量获取 ──────────────────────────────────────────
 
-    def fetch_all(self, since: datetime, mode: str = "light") -> dict:
+    def fetch_all(self, since: datetime, mode: str = "light", repo_limit: int = None) -> dict:
         """批量获取所有配置仓库的数据快照。
         
         Args:
             since: 时间过滤起始点
             mode: light（轻量模式，过滤无关数据）或 full（全量模式，保留所有数据）
+            repo_limit: 限制拉取的仓库数量（默认 None，拉取全部）
         """
         results = {}
-        for full_name in self.repos:
+        repos_to_fetch = self.repos[:repo_limit] if repo_limit else self.repos
+        
+        for full_name in repos_to_fetch:
             owner, repo = full_name.split("/")
             logger.info("Fetching %s/%s ...", owner, repo)
 

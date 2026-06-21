@@ -53,18 +53,24 @@ def save_daily_data(data: dict, date: datetime):
     return filepath
 
 
-def run_daily():
-    """执行每日报告生成和数据采集。"""
+def run_daily(repo_limit: int = None):
+    """执行每日报告生成和数据采集。
+    
+    Args:
+        repo_limit: 限制拉取的仓库数量（默认 None，拉取全部）
+    """
     now = datetime.now(timezone.utc)
     since = now - timedelta(hours=24)
 
     logger.info("=" * 50)
     logger.info("Generating DAILY report (since %s)...", since.isoformat())
+    if repo_limit:
+        logger.info("Repo limit: %d (testing mode)", repo_limit)
 
     # 1. 抓取数据
     logger.info("Step 1: Fetching data from GitHub API...")
     fetcher = GitHubFetcher()
-    raw_data = fetcher.fetch_all(since, mode="light")
+    raw_data = fetcher.fetch_all(since, mode="light", repo_limit=repo_limit)
 
     # 2. 分析
     logger.info("Step 2: Analyzing data...")
@@ -102,10 +108,10 @@ def run_daily():
     return filepath
 
 
-def run(report_type: str = "daily"):
+def run(report_type: str = "daily", repo_limit: int = None):
     """执行指定类型的报告生成。"""
     if report_type == "daily":
-        return run_daily()
+        return run_daily(repo_limit)
     else:
         logger.error("Only 'daily' report type is supported currently")
         sys.exit(1)
@@ -116,5 +122,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LLM-Inference-Watch Report Generator")
     parser.add_argument("type", nargs="?", default="daily", choices=["daily"],
                         help="Report type to generate (only 'daily' is supported)")
+    parser.add_argument("--limit", "-l", type=int, default=None,
+                        help="Limit the number of repos to fetch (default: all)")
     args = parser.parse_args()
-    run(args.type)
+    run(args.type, args.limit)

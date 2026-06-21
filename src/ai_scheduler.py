@@ -90,7 +90,7 @@ def merge_analysis_results(data_files: List[str]) -> Dict:
         }
     }
 
-    for filepath in data_files:
+    for filepath in data_files[::-1]:
         with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
 
@@ -120,8 +120,8 @@ def merge_analysis_results(data_files: List[str]) -> Dict:
                 repo_merged["commits"]["by_category"][cat] = \
                     repo_merged["commits"]["by_category"].get(cat, 0) + count
 
-            repo_merged["issues"]["total"] += repo_data.get("issues", {}).get("total", 0)
-            repo_merged["pull_requests"]["total"] += repo_data.get("pull_requests", {}).get("total", 0)
+            repo_merged["issues"]["total"] = repo_data.get("issues", {}).get("total", 0)
+            repo_merged["pull_requests"]["total"] = repo_data.get("pull_requests", {}).get("total", 0)
             repo_merged["pull_requests"]["merged"] += repo_data.get("pull_requests", {}).get("merged", 0)
 
             seen_commits = {c["sha"] for c in repo_merged["commits"]["key_commits"]}

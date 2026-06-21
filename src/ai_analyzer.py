@@ -335,6 +335,9 @@ class AIAnalyzer:
 
         prompt = template.replace("{DATE_RANGE}", date_range_str).replace("{DAYS}", str(days)).replace("{STATS_DATA}", stats_data).replace("{DETAILED_DATA}", detailed_text)
 
+        logger.info("Stats data passed to AI:")
+        logger.info(stats_data)
+
         if not self.api_key:
             logger.warning("No AI API key, using mock")
             return {"success": True, "content": "# 模拟报告\n\n(请设置 AI_API_KEY 环境变量)"}

@@ -207,99 +207,59 @@ class AIAnalyzer:
         return self._call_ai_analysis(notable_data)
 
     def _build_prompt(self, notable_data: Dict) -> str:
-        """构建 AI 分析的 prompt，包含完整的 PR/Issue/Commit 信息。"""
+        """构建 AI 分析的 prompt，从模板文件加载。"""
         date_range = notable_data.get("date_range", notable_data.get("date", ""))
         days = notable_data.get("days", 1)
 
-        prompt = f"""你是一个 LLM 推理引擎领域的专家分析师。请分析以下推理引擎仓库的最近 {days} 天变更，
-提取值得关注的技术趋势和重要合入，忽略 CI/文档/测试等非核心修改。
+        template_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "config", "prompt_template.txt"
+        )
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = f.read()
 
-## 分析时间范围
-{date_range}（共 {days} 天）
+        repo_data = ""
+        for repo_name, repo_info in notable_data["repos"].items():
+            repo_data += f"\n### {repo_name}\n\n"
 
-## 分析要求
-1. **过滤规则**：忽略 CI、文档、测试、版本号更新等非核心变更
-2. **关注重点**：性能优化、新模型支持、Kernel 优化、分布式推理、新功能、API 变更
-3. **输出格式**：结构化的 Markdown 报告，包含趋势洞察和详细分析
-4. **深度分析**：基于提供的完整信息进行深入分析，不要泛泛而谈
+            if repo_info["key_commits"]:
+                repo_data += "**关键变更（按重要性排序）：**\n"
+                for commit in repo_info["key_commits"]:
+                    repo_data += f"- [{commit['sha']}] {commit['message']} ({commit['category']})\n"
+                repo_data += "\n"
 
-## 仓库数据
-"""
-
-        for repo_name, repo_data in notable_data["repos"].items():
-            prompt += f"\n### {repo_name}\n\n"
-
-            if repo_data["key_commits"]:
-                prompt += "**关键变更（按重要性排序）：**\n"
-                for commit in repo_data["key_commits"]:
-                    prompt += f"- [{commit['sha']}] {commit['message']} ({commit['category']})\n"
-                prompt += "\n"
-
-            if repo_data["notable_prs"]:
-                prompt += "**高互动/已合并 PR：**\n"
-                for pr in repo_data["notable_prs"]:
+            if repo_info["notable_prs"]:
+                repo_data += "**高互动/已合并 PR：**\n"
+                for pr in repo_info["notable_prs"]:
                     state_icon = "✅" if pr["state"] == "merged" else "🔄"
-                    prompt += f"- {state_icon} #{pr['number']}: {pr['title']} (@{pr['user']}, 💬{pr['comments']}, {pr['category']})\n"
-                prompt += "\n"
+                    repo_data += f"- {state_icon} #{pr['number']}: {pr['title']} (@{pr['user']}, 💬{pr['comments']}, {pr['category']})\n"
+                repo_data += "\n"
 
-            if repo_data["releases"]:
-                prompt += "**新版本发布：**\n"
-                for rel in repo_data["releases"]:
-                    prompt += f"- {rel['tag']}: {rel['name']}\n"
+            if repo_info["releases"]:
+                repo_data += "**新版本发布：**\n"
+                for rel in repo_info["releases"]:
+                    repo_data += f"- {rel['tag']}: {rel['name']}\n"
                     if rel["body"]:
-                        prompt += f"  > {rel['body'][:200]}...\n"
-                prompt += "\n"
+                        repo_data += f"  > {rel['body'][:200]}...\n"
+                repo_data += "\n"
 
-            if repo_data["notable_issues"]:
-                prompt += "**高互动 Issues：**\n"
-                for issue in repo_data["notable_issues"]:
-                    prompt += f"- #{issue['number']}: {issue['title']} (@{issue['user']}, 💬{issue['comments']})\n"
-                prompt += "\n"
+            if repo_info["notable_issues"]:
+                repo_data += "**高互动 Issues：**\n"
+                for issue in repo_info["notable_issues"]:
+                    repo_data += f"- #{issue['number']}: {issue['title']} (@{issue['user']}, 💬{issue['comments']})\n"
+                repo_data += "\n"
 
-            if repo_data["category_distribution"]:
-                prompt += "**变更类别分布：**\n"
-                for cat, count in repo_data["category_distribution"].items():
-                    prompt += f"- {cat}: {count}\n"
-                prompt += "\n"
+            if repo_info["category_distribution"]:
+                repo_data += "**变更类别分布：**\n"
+                for cat, count in repo_info["category_distribution"].items():
+                    repo_data += f"- {cat}: {count}\n"
+                repo_data += "\n"
 
-        prompt += f"""
-
-## 输出格式要求
-
-请按照以下格式输出分析报告：
-
-# 🤖 LLM 推理引擎 AI 深度分析报告
-
-> 📅 {date_range}（共 {days} 天）
-
-## 一、核心趋势
-
-用 3-5 条要点概括这段时间最核心的技术趋势。
-
-## 二、各仓库深度分析
-
-### {{仓库名}}
-
-**重点关注：**
-- {{要点1}}
-- {{要点2}}
-
-**技术亮点：**
-{{详细分析}}
-
-## 三、跨仓库趋势对比
-
-对比各仓库的发展方向和技术侧重点。
-
-## 四、生态趋势预测
-
-基于这段时间动态，预测未来 1-2 个月的发展方向。
-
-## 五、值得关注的 PR/Issue
-
-列出最值得持续关注的 PR 和 Issue，包含编号和简要说明。
-
-请确保分析专业、深入，聚焦技术实质，避免泛泛而谈。"""
+        prompt = template.format(
+            date_range=date_range,
+            days=days,
+            repo_data=repo_data,
+        )
 
         return prompt
 

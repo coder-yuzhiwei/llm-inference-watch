@@ -1,4 +1,4 @@
-"""AI 智能分析模块 — 对周报数据进行深度分析，提取推理引擎发展趋势"""
+"""AI 智能分析模块：对周报数据进行深度分析，提取推理引擎发展趋势"""
 
 import os
 import re
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class DataAnalyzer:
-    """从分析后的数据中提取值得关注的变更。"""
+    """从分析后的数据中提取值得关注的变更"""
 
     IGNORED_CATEGORIES = ["ci_docs", "refactor", "other"]
 
@@ -25,7 +25,7 @@ class DataAnalyzer:
         self.repos = self.config["repos"]
 
     def extract_notable_changes(self, analysis_results: Dict) -> Dict:
-        """从分析结果中提取值得关注的变更。"""
+        """从分析结果中提取值得关注的变更"""
         notable_data = {
             "repos": {},
             "releases": [],
@@ -100,7 +100,7 @@ class DataAnalyzer:
         return notable_data
 
     def _is_notable_commit(self, message: str) -> bool:
-        """判断 commit 是否值得关注。"""
+        """判断 commit 是否值得关注"""
         msg_lower = message.lower()
         ignore_keywords = ["ci", "docs", "documentation", "readme", "changelog", "typo",
                            "spelling", "lint", "format", "style", "docker", "infra",
@@ -113,7 +113,7 @@ class DataAnalyzer:
         return True
 
     def _classify_commit(self, message: str) -> str:
-        """简单的 commit 分类。"""
+        """简单的 commit 分类"""
         msg_lower = message.lower()
         categories = {
             "performance": ["perf", "performance", "optimize", "speed", "throughput", "latency", "memory", "throughput"],
@@ -133,7 +133,7 @@ class DataAnalyzer:
 
 
 class AIAnalyzer:
-    """调用 AI 进行深度分析，提取推理引擎发展趋势。"""
+    """调用 AI 进行深度分析，提取推理引擎发展趋势"""
 
     def __init__(self, config_path: str = "config/repos.yaml"):
         load_dotenv()
@@ -141,16 +141,20 @@ class AIAnalyzer:
         with open(config_path, "r", encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
 
+        ai_config = self.config.get("ai", {})
+
         self.data_analyzer = DataAnalyzer(config_path)
         self.api_key = os.environ.get("AI_API_KEY") or os.environ.get("OPENAI_API_KEY")
         self.api_base = os.environ.get("AI_API_BASE")
-        self.model = os.environ.get("AI_MODEL") or "deepseek-v4-flash"
+        self.model = os.environ.get("AI_MODEL") or ai_config.get("default_model", "deepseek-v4-flash")
+        self.max_tokens = ai_config.get("max_tokens", 4096)
+        self.temperature = ai_config.get("temperature", 0.3)
 
         if not self.api_key:
             logger.warning("AI_API_KEY 或 OPENAI_API_KEY 未设置，将使用模拟分析模式")
 
     def analyze_from_data(self, data_path: str) -> Dict:
-        """从分析数据文件中进行 AI 分析。"""
+        """从分析数据文件中进行 AI 分析"""
         logger.info("Loading analyzed data from: %s", data_path)
         with open(data_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -179,7 +183,7 @@ class AIAnalyzer:
         return self._call_ai_analysis(notable_data)
 
     def analyze_from_merged_data(self, merged_data: Dict) -> Dict:
-        """从合并后的多日数据中进行 AI 分析。"""
+        """从合并后的多日数据中进行 AI 分析"""
         analysis_results = merged_data.get("analysis_results", {})
         date_range = merged_data.get("date_range", {})
 
@@ -200,7 +204,7 @@ class AIAnalyzer:
         return self._call_ai_analysis(notable_data)
 
     def filter_items(self, filter_data: Dict) -> Dict:
-        """Step 1: AI 筛选值得深入了解的 issue/PR。"""
+        """Step 1: AI 筛选值得深入了解的 issue/PR"""
         template_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "config", "prompts", "step1_filter.txt"
@@ -254,16 +258,28 @@ class AIAnalyzer:
                 messages=[
                     {"role": "user", "content": prompt},
                 ],
-                temperature=0.3,
-                max_tokens=2048,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
             )
 
             result_text = response.choices[0].message.content.strip()
 
-            json_match = re.search(r'\{[\s\S]*\}', result_text)
-            if json_match:
-                return json.loads(json_match.group())
+            code_block_match = re.search(r'```(?:json)?\s*(\{[\s\S]*?\})\s*```', result_text)
+            if code_block_match:
+                try:
+                    return json.loads(code_block_match.group(1))
+                except:
+                    pass
 
+            json_match = re.search(r'(\{[\s\S]*\})', result_text)
+            if json_match:
+                try:
+                    return json.loads(json_match.group(1))
+                except:
+                    pass
+
+            logger.warning("Failed to parse AI response as JSON")
+            logger.warning("Response preview: %s", result_text[:500])
             return {}
 
         except Exception as e:
@@ -271,7 +287,7 @@ class AIAnalyzer:
             return {}
 
     def generate_report(self, merged_data: Dict, detailed_data: Dict) -> Dict:
-        """Step 2: 基于真实详情生成最终报告。"""
+        """Step 2: 基于真实详情生成最终报告"""
         template_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "config", "prompts", "step2_analyze.txt"
@@ -337,8 +353,8 @@ class AIAnalyzer:
                     {"role": "system", "content": "你是一个资深的 LLM 推理引擎技术分析师。"},
                     {"role": "user", "content": prompt},
                 ],
-                temperature=0.3,
-                max_tokens=4096,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
             )
 
             return {
@@ -353,7 +369,7 @@ class AIAnalyzer:
             return {"success": False, "error": str(e)}
 
     def _build_prompt(self, notable_data: Dict) -> str:
-        """构建 AI 分析的 prompt，从模板文件加载。"""
+        """构建 AI 分析的 prompt，从模板文件加载"""
         date_range = notable_data.get("date_range", notable_data.get("date", ""))
         days = notable_data.get("days", 1)
 
@@ -375,7 +391,7 @@ class AIAnalyzer:
                 repo_data += "\n"
 
             if repo_info["notable_prs"]:
-                repo_data += "**高互动/已合并 PR：**\n"
+                repo_data += "**高互动已合入 PR：**\n"
                 for pr in repo_info["notable_prs"]:
                     state_icon = "✅" if pr["state"] == "merged" else "🔄"
                     repo_data += f"- {state_icon} #{pr['number']}: {pr['title']} (@{pr['user']}, 💬{pr['comments']}, {pr['category']})\n"
@@ -410,7 +426,7 @@ class AIAnalyzer:
         return prompt
 
     def _call_ai_analysis(self, notable_data: Dict) -> Dict:
-        """调用 AI API 进行分析。"""
+        """调用 AI API 进行分析"""
         prompt = self._build_prompt(notable_data)
 
         try:
@@ -427,8 +443,8 @@ class AIAnalyzer:
                     {"role": "system", "content": "你是一个资深的 LLM 推理引擎技术分析师，擅长从代码变更中提取技术趋势。"},
                     {"role": "user", "content": prompt},
                 ],
-                temperature=0.3,
-                max_tokens=4096,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
             )
 
             return {
@@ -446,7 +462,7 @@ class AIAnalyzer:
             return self._mock_analysis(notable_data)
 
     def _mock_analysis(self, notable_data: Dict) -> Dict:
-        """模拟 AI 分析结果。"""
+        """模拟 AI 分析结果"""
         date_range = notable_data.get("date_range", notable_data.get("date", ""))
         days = notable_data.get("days", 1)
 
@@ -470,6 +486,7 @@ class AIAnalyzer:
             content += f"""### {repo_name}
 
 **重点关注：**
+
 """
             if repo_data["key_commits"]:
                 for commit in repo_data["key_commits"][:3]:
@@ -519,7 +536,7 @@ class AIAnalyzer:
         }
 
     def list_analyzed_data(self, report_type: str = "weekly") -> List[str]:
-        """列出可用的分析数据文件。"""
+        """列出可用的分析数据文件"""
         data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "analyzed")
         if not os.path.exists(data_dir):
             return []

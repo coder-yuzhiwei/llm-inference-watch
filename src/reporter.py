@@ -14,6 +14,8 @@ class MarkdownReporter:
         with open(config_path, "r", encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
 
+        self.display_config = self.config.get("display", {})
+
     # ═══════════════════════════════════════════════════════════
     # 工具方法
     # ═══════════════════════════════════════════════════════════
@@ -103,13 +105,13 @@ class MarkdownReporter:
             if commit_cats:
                 cats_str = " · ".join(
                     f"{self._emoji_for_category(k)} {k}: {v}"
-                    for k, v in list(commit_cats.items())[:5]
+                    for k, v in list(commit_cats.items())[:self.display_config.get("daily", {}).get("max_categories", 5)]
                 )
                 lines.append(f"📝 **{result['commits']['total']} commits** — {cats_str}")
                 lines.append(f"")
 
             # 关键 commit
-            key_commits = result["commits"].get("key_commits", [])[:5]
+            key_commits = result["commits"].get("key_commits", [])[:self.display_config.get("daily", {}).get("key_commits", 5)]
             if key_commits:
                 for kc in key_commits:
                     lines.append(f"- [`{kc['sha']}`]({kc['html_url']}) {self._truncate(kc['message'])} "
@@ -117,7 +119,7 @@ class MarkdownReporter:
                 lines.append(f"")
 
             # 重要 PR
-            notable_prs = result["pull_requests"].get("notable", [])[:3]
+            notable_prs = result["pull_requests"].get("notable", [])[:self.display_config.get("daily", {}).get("notable_prs", 3)]
             if notable_prs:
                 lines.append(f"🔀 **高互动 PR：**")
                 for pr in notable_prs:
@@ -127,7 +129,7 @@ class MarkdownReporter:
                 lines.append(f"")
 
             # 重要 issue
-            notable_issues = result["issues"].get("notable", [])[:3]
+            notable_issues = result["issues"].get("notable", [])[:self.display_config.get("daily", {}).get("notable_issues", 3)]
             if notable_issues:
                 lines.append(f"🐛 **热门 Issue：**")
                 for iss in notable_issues:
@@ -140,7 +142,7 @@ class MarkdownReporter:
             releases = result.get("releases", [])
             if releases:
                 lines.append(f"📦 **新 Release：**")
-                for rel in releases[:2]:
+                for rel in releases[:self.display_config.get("daily", {}).get("releases", 2)]:
                     lines.append(f"- [{rel['tag_name']}]({rel['html_url']}) — {rel.get('name', '')}")
                 lines.append(f"")
 
@@ -264,7 +266,7 @@ class MarkdownReporter:
                 lines.append(f"")
 
             # 关键变更
-            key_commits = result["commits"].get("key_commits", [])[:8]
+            key_commits = result["commits"].get("key_commits", [])[:self.display_config.get("weekly", {}).get("key_commits", 8)]
             if key_commits:
                 lines.append(f"#### 🔑 关键变更")
                 lines.append(f"")
@@ -282,12 +284,12 @@ class MarkdownReporter:
             if pr_cats:
                 cats_str = " · ".join(
                     f"{self._emoji_for_category(k)} {k}: {v}"
-                    for k, v in list(pr_cats.items())[:5]
+                    for k, v in list(pr_cats.items())[:self.display_config.get("weekly", {}).get("max_categories", 5)]
                 )
                 lines.append(f"**分类分布：** {cats_str}")
                 lines.append(f"")
 
-            notable_prs = pr_data.get("notable", [])[:5]
+            notable_prs = pr_data.get("notable", [])[:self.display_config.get("weekly", {}).get("notable_prs", 5)]
             if notable_prs:
                 lines.append(f"**高互动 PR：**")
                 lines.append(f"")
@@ -301,7 +303,7 @@ class MarkdownReporter:
             issue_data = result["issues"]
             lines.append(f"#### 🐛 Issue 动态（{issue_data['total']} 个）")
             lines.append(f"")
-            notable_issues = issue_data.get("notable", [])[:5]
+            notable_issues = issue_data.get("notable", [])[:self.display_config.get("weekly", {}).get("notable_issues", 5)]
             if notable_issues:
                 for iss in notable_issues:
                     state_icon = "✅" if iss["state"] == "closed" else "🔴"
@@ -313,7 +315,7 @@ class MarkdownReporter:
             top_authors = result["commits"].get("top_authors", {})
             if top_authors:
                 authors_str = ", ".join(
-                    f"**{a}** ({c})" for a, c in list(top_authors.items())[:5]
+                    f"**{a}** ({c})" for a, c in list(top_authors.items())[:self.display_config.get("weekly", {}).get("max_authors", 5)]
                 )
                 lines.append(f"#### 👥 活跃贡献者")
                 lines.append(f"")
@@ -325,7 +327,7 @@ class MarkdownReporter:
             if releases:
                 lines.append(f"#### 📦 Releases")
                 lines.append(f"")
-                for rel in releases:
+                for rel in releases[:self.display_config.get("weekly", {}).get("releases", 3)]:
                     lines.append(f"- **[{rel['tag_name']}]({rel['html_url']})** "
                                  f"— {rel.get('name', 'No title')}")
                     body = rel.get("body", "").strip()

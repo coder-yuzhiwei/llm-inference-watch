@@ -10,12 +10,55 @@ repos:
 github:
   # 如设置 token 可提高 API 速率限制（5000 次/小时 vs 60 次/小时）
   # 通过环境变量 GITHUB_TOKEN 传入，不在此文件明文存储
-  per_page: 100
-  max_pages: 5
+  per_page: 100        # 每次 API 请求返回的条目数
+  max_pages: 5         # 最多拉取多少页（总条目数 = per_page * max_pages）
 
 # 报告配置
 report:
-  timezone: "Asia/Shanghai"
-  daily_lookback_hours: 24
-  weekly_lookback_days: 7
-  monthly_lookback_days: 30
+  timezone: "Asia/Shanghai"    # 报告时间显示时区
+  daily_lookback_hours: 24     # 每日报告回溯时间（小时）
+  weekly_lookback_days: 7      # 每周报告回溯时间（天）
+  monthly_lookback_days: 30    # 每月报告回溯时间（天）
+
+# 数据采集配置（存储前的处理参数）
+fetch:
+  notable_comments_threshold: 3       # 判定为高互动的评论数阈值，超过此值才计入 notable
+  commit_message_max_length: 120      # commit 消息截取长度（字符）
+  release_body_max_length: 300        # release 描述截取长度（字符）
+
+# 报告显示配置（控制报告中各部分显示的数量）
+display:
+  daily:                                # 每日简报显示配置
+    key_commits: 5                      # 显示多少个关键 commit
+    notable_prs: 3                      # 显示多少个高互动 PR
+    notable_issues: 3                   # 显示多少个高互动 issue
+    releases: 2                         # 显示多少个 release
+    max_categories: 5                   # 分类分布最多显示几个类别
+
+  weekly:                               # 每周报告显示配置
+    key_commits: 8                      # 显示多少个关键 commit
+    notable_prs: 5                      # 显示多少个高互动 PR
+    notable_issues: 5                   # 显示多少个高互动 issue
+    releases: 3                         # 显示多少个 release
+    max_categories: 5                   # 分类分布最多显示几个类别
+    max_authors: 5                      # 活跃贡献者最多显示几个
+
+# AI 分析配置
+ai:
+  default_model: "deepseek-v4-flash"    # 默认 AI 模型，可通过环境变量 AI_MODEL 覆盖
+  max_tokens: 131072                      # AI 返回的最大 token 数（影响回复长度）
+  temperature: 0.3                      # AI 生成随机性（0-1，越低越保守准确，越高越有创造力）
+  default_analysis_days: 7              # AI 分析默认回溯天数，可通过 --days 参数覆盖
+
+  # AI 筛选阶段（第一步：从大量数据中筛选值得深入的项）
+  filter:
+    max_items_per_repo_multiplier: 2    # 每个仓库最多选分析天数 × 此倍数的 item（如 7天 × 2 = 最多14个）
+    input_limit:                        # 传给 AI 筛选的输入数据量限制
+      issues: 10                        # 每个仓库最多传多少个 issue 标题
+      prs: 10                           # 每个仓库最多传多少个 PR 标题
+      commits: 10                       # 每个仓库最多传多少个 commit
+      releases: 3                       # 每个仓库最多传多少个 release
+
+  # 详情拉取阶段（第二步：获取选中项的完整内容）
+  detail:
+    body_max_length: 1000               # issue/PR body 截取长度（字符）

@@ -1,12 +1,23 @@
 """数据分析与分类模块"""
 
+import os
 import re
 import logging
+import yaml
 from collections import Counter, defaultdict
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 logger = logging.getLogger(__name__)
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONFIG_PATH = os.path.join(PROJECT_ROOT, "config", "repos.yaml")
+
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+    CONFIG = yaml.safe_load(f)
+
+FETCH_CONFIG = CONFIG.get("fetch", {})
+DISPLAY_CONFIG = CONFIG.get("display", {})
 
 
 class ChangeClassifier:
@@ -132,7 +143,7 @@ class Analyzer:
 
             # 标记高互动 PR（comments 来自 Issues API，过滤 bug 类）
             comments = pr.get("comments", 0)
-            if comments >= 3 and cat != "bug":
+            if comments >= FETCH_CONFIG.get("notable_comments_threshold", 3) and cat != "bug":
                 user = pr.get("user", "")
                 if isinstance(user, dict):
                     user = user.get("login", "")
@@ -151,7 +162,7 @@ class Analyzer:
         # 高互动 issue（过滤 bug 类）
         notable_issues = []
         for i in issues:
-            if i.get("comments", 0) >= 3:
+            if i.get("comments", 0) >= FETCH_CONFIG.get("notable_comments_threshold", 3):
                 cat = self.classifier.classify_issue(i)
                 if cat == "bug":
                     continue
@@ -176,7 +187,7 @@ class Analyzer:
                 "name": r.get("name"),
                 "html_url": r.get("html_url"),
                 "published_at": r.get("published_at"),
-                "body": (r.get("body") or "")[:300],
+                "body": (r.get("body") or "")[:FETCH_CONFIG.get("release_body_max_length", 300)],
             })
 
         # 提取 commit 中的关键变更（非 trivial 的 commit）
@@ -186,7 +197,7 @@ class Analyzer:
             if len(msg) > 10 and not msg.lower().startswith(("merge", "bump", "chore", "typo", "nit")):
                 key_commits.append({
                     "sha": c.get("sha", "")[:7],
-                    "message": msg[:120],
+                    "message": msg[:FETCH_CONFIG.get("commit_message_max_length", 120)],
                     "html_url": c.get("html_url"),
                     "author": c.get("commit", {}).get("author", {}).get("name", "unknown"),
                 })

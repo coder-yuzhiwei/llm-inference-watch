@@ -130,9 +130,9 @@ class Analyzer:
             else:
                 pr_closed += 1
 
-            # 标记高互动 PR（comments 来自 Issues API）
+            # 标记高互动 PR（comments 来自 Issues API，过滤 bug 类）
             comments = pr.get("comments", 0)
-            if comments >= 5:
+            if comments >= 5 and cat != "bug":
                 user = pr.get("user", "")
                 if isinstance(user, dict):
                     user = user.get("login", "")
@@ -148,10 +148,13 @@ class Analyzer:
 
         notable_prs.sort(key=lambda x: x["comments"], reverse=True)
 
-        # 高互动 issue
+        # 高互动 issue（过滤 bug 类）
         notable_issues = []
         for i in issues:
             if i.get("comments", 0) >= 3:
+                cat = self.classifier.classify_issue(i)
+                if cat == "bug":
+                    continue
                 user = i.get("user", "")
                 if isinstance(user, dict):
                     user = user.get("login", "")

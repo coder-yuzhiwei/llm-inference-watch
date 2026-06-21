@@ -52,12 +52,12 @@ ai:
 
   # AI 筛选阶段（第一步：从大量数据中筛选值得深入的项）
   filter:
-    max_items_per_repo_multiplier: 2    # 每个仓库最多选分析天数 × 此倍数的 item（如 7天 × 2 = 最多14个）
+    max_items_per_repo_multiplier: 1    # 每个仓库最多选分析天数 × 此倍数的 item（如 7天 × 1 = 最多7个）
     input_limit:                        # 传给 AI 筛选的输入数据量限制
-      issues: 1000                        # 每个仓库最多传多少个 issue 标题
-      prs: 1000                           # 每个仓库最多传多少个 PR 标题
-      commits: 1000                       # 每个仓库最多传多少个 commit
-      releases: 300                       # 每个仓库最多传多少个 release
+      issues: 10                        # 每个仓库最多传多少个 issue 标题
+      prs: 10                           # 每个仓库最多传多少个 PR 标题
+      commits: 10                       # 每个仓库最多传多少个 commit
+      releases: 3                       # 每个仓库最多传多少个 release
 
   # 详情拉取阶段（第二步：获取选中项的完整内容）
   detail:

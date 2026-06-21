@@ -306,12 +306,24 @@ def analyze(days: int = None):
             selection[repo_name]["prs"] = items["prs"][:max_per_repo]
 
     logger.info("AI selected items (after limit):")
+    total_issues = 0
+    total_prs = 0
     for repo, items in selection.items():
+        issue_count = len(items.get("issues", []))
+        pr_count = len(items.get("prs", []))
+        total_issues += issue_count
+        total_prs += pr_count
         logger.info("  %s: %d issues, %d PRs (max per repo: %d)",
                     repo,
-                    len(items.get("issues", [])),
-                    len(items.get("prs", [])),
+                    issue_count,
+                    pr_count,
                     max_per_repo)
+
+    logger.info("=" * 50)
+    logger.info("Total unique items selected by AI:")
+    logger.info("  Issues: %d", total_issues)
+    logger.info("  PRs: %d", total_prs)
+    logger.info("  Total: %d", total_issues + total_prs)
 
     # Step 2.5: 将选中结果标记到每日 JSON 文件
     logger.info("=" * 50)

@@ -76,13 +76,24 @@ class ChangeClassifier:
 
     @classmethod
     def classify_pr(cls, pr: dict) -> str:
-        """根据 PR 标题和标签分类。"""
+        """根据 PR 标题和标签分类。
+        
+        优先级：标题关键词 > labels
+        因为标题更能反映 PR 的真实类型（如 [Feature]、TRITON 等）。
+        """
+        # 1. 先检查标题关键词（优先级更高）
+        title = pr.get("title", "").lower()
+        title_category = cls.classify_commit(title)
+        if title_category != "other":
+            return title_category
+        
+        # 2. 如果标题没有匹配，再检查 labels
         labels = [l["name"].lower() for l in pr.get("labels", [])]
         for label, category in cls.ISSUE_LABEL_MAP.items():
             if label in labels:
                 return category
-        title = pr.get("title", "").lower()
-        return cls.classify_commit(title)
+        
+        return "other"
 
 
 class Analyzer:
@@ -147,6 +158,7 @@ class Analyzer:
                 user = pr.get("user", "")
                 if isinstance(user, dict):
                     user = user.get("login", "")
+                labels = [l.get("name", "") for l in pr.get("labels", [])]
                 notable_prs.append({
                     "number": pr.get("number"),
                     "title": pr.get("title"),
@@ -155,6 +167,7 @@ class Analyzer:
                     "comments": comments,
                     "state": "merged" if pr.get("merged_at") else pr.get("state"),
                     "category": cat,
+                    "labels": labels,
                 })
 
         notable_prs.sort(key=lambda x: x["comments"], reverse=True)
@@ -169,6 +182,7 @@ class Analyzer:
                 user = i.get("user", "")
                 if isinstance(user, dict):
                     user = user.get("login", "")
+                labels = [l.get("name", "") for l in i.get("labels", [])]
                 notable_issues.append({
                     "number": i.get("number"),
                     "title": i.get("title"),
@@ -176,6 +190,8 @@ class Analyzer:
                     "user": user,
                     "comments": i.get("comments", 0),
                     "state": i.get("state"),
+                    "category": cat,
+                    "labels": labels,
                 })
         notable_issues.sort(key=lambda x: x["comments"], reverse=True)
 

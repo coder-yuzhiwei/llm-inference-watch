@@ -95,7 +95,7 @@
 |--------|------|
 | **两步 AI** | 先筛选（只看标题）→ 再拉详情 → 最后生成报告，避免 AI 基于标题幻觉 |
 | **去重机制** | 合并多日数据时，同一 issue/PR 只保留一条最新记录 |
-| **动态数量** | 每个仓库最多选 `分析天数 × 2` 个 item |
+| **动态数量** | 每个仓库最多选 `分析天数 × 2(可配置)` 个 item |
 | **数据分级** | daily JSON 是原始分析数据，报告是最终产物 |
 
 ---
@@ -167,7 +167,6 @@ AI_MODEL=deepseek-v4-flash
 |-----------|----------|---------|
 | DeepSeek | `https://api.deepseek.com` | `deepseek-v4-flash`, `deepseek-v4-pro` |
 
-> **注意：** DeepSeek 的 `deepseek-chat` 和 `deepseek-reasoner` 模型将于 2026/07/24 弃用，请使用新模型 `deepseek-v4-flash` 或 `deepseek-v4-pro`。
 
 ---
 

@@ -1,0 +1,1238 @@
+{
+  "analysis_results": {
+    "vllm-project/vllm": {
+      "name": "vllm-project/vllm",
+      "info": {
+        "stars": 90004,
+        "forks": 21188,
+        "open_issues": 7019,
+        "description": "A high-throughput and memory-efficient inference and serving engine for LLMs"
+      },
+      "commits": {
+        "total": 36,
+        "by_category": {
+          "bug": 19,
+          "feature": 5,
+          "model_support": 4,
+          "refactor": 3,
+          "performance": 2,
+          "other": 1,
+          "api": 1,
+          "kernel": 1
+        },
+        "top_authors": {
+          "Moe Huzaifa": 3,
+          "Wentao Ye": 2,
+          "Taneem Ibrahim": 2,
+          "Harry Mellor": 2,
+          "Yan Ma": 1,
+          "Naveenraj Kamalakannan": 1,
+          "Elvir Crnčević": 1,
+          "Tianyu Guo": 1,
+          "Jiahao Liang": 1,
+          "Ning Xie": 1
+        },
+        "key_commits": []
+      },
+      "issues": {
+        "total": 73,
+        "by_category": {
+          "bug": 42,
+          "other": 11,
+          "feature": 10,
+          "performance": 4,
+          "distributed": 2,
+          "community": 1,
+          "model_support": 1,
+          "ci_docs": 1,
+          "kernel": 1
+        },
+        "notable": [
+          {
+            "number": 9129,
+            "title": "[Misc]: CMake Clean-up / Refactor Tasks",
+            "html_url": "https://github.com/vllm-project/vllm/issues/9129",
+            "user": "LucasWilkinson",
+            "comments": 18,
+            "state": "open",
+            "category": "community",
+            "labels": [
+              "help wanted",
+              "good first issue",
+              "keep-open",
+              "unstale"
+            ]
+          },
+          {
+            "number": 37141,
+            "title": "[Feature]: Upstream DGX spark improvements from Avarok-Cybersecurity/dgx-vllm",
+            "html_url": "https://github.com/vllm-project/vllm/issues/37141",
+            "user": "ProExpertProg",
+            "comments": 15,
+            "state": "closed",
+            "category": "feature",
+            "labels": [
+              "help wanted",
+              "feature request",
+              "stale",
+              "nvidia",
+              "quantization"
+            ]
+          },
+          {
+            "number": 38006,
+            "title": "[Feature]: Implement `TRITON_MLA_SPARSE` backend for sm80/120/121 support of Sparse MLA",
+            "html_url": "https://github.com/vllm-project/vllm/issues/38006",
+            "user": "ehfd",
+            "comments": 15,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "feature request",
+              "unstale"
+            ]
+          },
+          {
+            "number": 49548,
+            "title": "[Performance]: Dynamic speculative decoding (num_speculative_tokens_per_batch_size) causes catastrophic aggregate-throughput collapse under concurrency at the batch-size threshold (MTP, V1/PIECEWISE)",
+            "html_url": "https://github.com/vllm-project/vllm/issues/49548",
+            "user": "tobby168",
+            "comments": 11,
+            "state": "open",
+            "category": "performance",
+            "labels": []
+          },
+          {
+            "number": 51472,
+            "title": "[RFC] Multimodal RL inputs for /inference/v1/generate",
+            "html_url": "https://github.com/vllm-project/vllm/issues/51472",
+            "user": "aoshen02",
+            "comments": 9,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "RFC",
+              "multi-modality"
+            ]
+          },
+          {
+            "number": 39215,
+            "title": "[Feature]: Use torch.compile Dynamo to see full trace for model forward pass",
+            "html_url": "https://github.com/vllm-project/vllm/issues/39215",
+            "user": "ProExpertProg",
+            "comments": 7,
+            "state": "closed",
+            "category": "feature",
+            "labels": [
+              "performance",
+              "feature request",
+              "torch.compile",
+              "stale"
+            ]
+          },
+          {
+            "number": 52803,
+            "title": "[ROCm][AMD] Kimi-K3 gfx942 / MI325X Gap and Roadmap",
+            "html_url": "https://github.com/vllm-project/vllm/issues/52803",
+            "user": "maeehart",
+            "comments": 6,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "rocm",
+              "quantization",
+              "kimi",
+              "k3"
+            ]
+          },
+          {
+            "number": 39363,
+            "title": "[vLLM IR] Propagate IR op names to torch profiler annotations",
+            "html_url": "https://github.com/vllm-project/vllm/issues/39363",
+            "user": "ProExpertProg",
+            "comments": 6,
+            "state": "closed",
+            "category": "other",
+            "labels": [
+              "stale"
+            ]
+          },
+          {
+            "number": 37113,
+            "title": "[SM120][GLM-5.1] NVFP4 DCP/MTP stack tracker",
+            "html_url": "https://github.com/vllm-project/vllm/issues/37113",
+            "user": "voipmonitor",
+            "comments": 5,
+            "state": "closed",
+            "category": "distributed",
+            "labels": [
+              "stale"
+            ]
+          },
+          {
+            "number": 51303,
+            "title": "[Tracking][Spec Decode] Adaptive DSpark Bring-Up Tracker",
+            "html_url": "https://github.com/vllm-project/vllm/issues/51303",
+            "user": "benchislett",
+            "comments": 4,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "speculative-decoding",
+              "DSv4",
+              "dflash",
+              "kimi",
+              "k3"
+            ]
+          }
+        ]
+      },
+      "pull_requests": {
+        "total": 500,
+        "merged": 48,
+        "open": 404,
+        "closed": 48,
+        "by_category": {
+          "bug": 211,
+          "feature": 118,
+          "performance": 52,
+          "model_support": 33,
+          "other": 31,
+          "ci_docs": 19,
+          "kernel": 16,
+          "refactor": 8,
+          "distributed": 7,
+          "api": 5
+        },
+        "notable": [
+          {
+            "number": 45635,
+            "title": "Enable return_routed_experts support with CPU KV offload",
+            "html_url": "https://github.com/vllm-project/vllm/pull/45635",
+            "user": "xhx1022",
+            "comments": 37,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "documentation",
+              "frontend",
+              "ready",
+              "ray",
+              "v1",
+              "kv-connector",
+              "mrv2",
+              "scheduler"
+            ]
+          },
+          {
+            "number": 49636,
+            "title": "[Model][MoE] DeepSeek-V4: add opt-in FlashInfer moe_ep expert backend",
+            "html_url": "https://github.com/vllm-project/vllm/pull/49636",
+            "user": "mhoqueanik",
+            "comments": 31,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "ready",
+              "ci/build",
+              "deepseek",
+              "nvidia",
+              "verified",
+              "DSv4"
+            ]
+          },
+          {
+            "number": 50932,
+            "title": "buffer size insuffient Dspark sd for FlashInfer MNNVL allreduce",
+            "html_url": "https://github.com/vllm-project/vllm/pull/50932",
+            "user": "khushali9",
+            "comments": 26,
+            "state": "open",
+            "category": "kernel",
+            "labels": [
+              "bug",
+              "ready",
+              "nvidia",
+              "dflash"
+            ]
+          },
+          {
+            "number": 52980,
+            "title": "[SM100] Hdim 256 optimized",
+            "html_url": "https://github.com/vllm-project/vllm/pull/52980",
+            "user": "simon-veitner-redhat",
+            "comments": 19,
+            "state": "open",
+            "category": "performance",
+            "labels": [
+              "documentation",
+              "ready",
+              "ci/build"
+            ]
+          },
+          {
+            "number": 49445,
+            "title": "[Core] Add `max_num_queued_reqs` and `max_num_queued_tokens` for queue size management",
+            "html_url": "https://github.com/vllm-project/vllm/pull/49445",
+            "user": "NickLucche",
+            "comments": 19,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "frontend",
+              "needs-rebase",
+              "v1"
+            ]
+          },
+          {
+            "number": 53183,
+            "title": "[Model Runner V2] Use MRV2 for all models by default",
+            "html_url": "https://github.com/vllm-project/vllm/pull/53183",
+            "user": "njhill",
+            "comments": 19,
+            "state": "open",
+            "category": "model_support",
+            "labels": [
+              "ready",
+              "nvidia",
+              "mrv2"
+            ]
+          },
+          {
+            "number": 52033,
+            "title": "[Perf][ROCm] Dual-stream decode with hipgraphs",
+            "html_url": "https://github.com/vllm-project/vllm/pull/52033",
+            "user": "simondanielsson",
+            "comments": 18,
+            "state": "open",
+            "category": "performance",
+            "labels": [
+              "rocm",
+              "ready"
+            ]
+          },
+          {
+            "number": 53291,
+            "title": "[CI] Speed up quantization test group",
+            "html_url": "https://github.com/vllm-project/vllm/pull/53291",
+            "user": "fxmarty-amd",
+            "comments": 18,
+            "state": "open",
+            "category": "performance",
+            "labels": [
+              "documentation",
+              "ready",
+              "quantization"
+            ]
+          },
+          {
+            "number": 51332,
+            "title": "[Quantization][Humming] Support MXFP4 weight + block-FP8 activation for MoE",
+            "html_url": "https://github.com/vllm-project/vllm/pull/51332",
+            "user": "elvircrn",
+            "comments": 18,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "ready",
+              "quantization"
+            ]
+          },
+          {
+            "number": 49994,
+            "title": "[EC Connector] EC Offloading Connector use events instead of StepTracker",
+            "html_url": "https://github.com/vllm-project/vllm/pull/49994",
+            "user": "omerpaz95",
+            "comments": 18,
+            "state": "open",
+            "category": "ci_docs",
+            "labels": [
+              "documentation",
+              "structured-output",
+              "speculative-decoding",
+              "ready",
+              "ci/build",
+              "v1",
+              "cpu",
+              "kv-connector",
+              "mrv2"
+            ]
+          }
+        ]
+      },
+      "releases": []
+    },
+    "sgl-project/sglang": {
+      "name": "sgl-project/sglang",
+      "info": {
+        "stars": 32430,
+        "forks": 8191,
+        "open_issues": 4926,
+        "description": "SGLang is a high-performance serving framework for large language models and multimodal models."
+      },
+      "commits": {
+        "total": 33,
+        "by_category": {
+          "feature": 11,
+          "bug": 9,
+          "other": 4,
+          "model_support": 3,
+          "kernel": 3,
+          "performance": 2,
+          "refactor": 1
+        },
+        "top_authors": {
+          "jacky.cheng": 4,
+          "Mick": 4,
+          "YAMY": 1,
+          "elvischenv": 1,
+          "Benjamin Truong": 1,
+          "Chao Shi": 1,
+          "Cheng Wan": 1,
+          "Hsiu-Chun, Hung": 1,
+          "jiaryang": 1,
+          "AuFlow": 1
+        },
+        "key_commits": []
+      },
+      "issues": {
+        "total": 32,
+        "by_category": {
+          "bug": 18,
+          "other": 6,
+          "feature": 4,
+          "kernel": 2,
+          "api": 1,
+          "model_support": 1
+        },
+        "notable": [
+          {
+            "number": 26340,
+            "title": "CUDA Coredump Tracker",
+            "html_url": "https://github.com/sgl-project/sglang/issues/26340",
+            "user": "hnyls2002",
+            "comments": 247,
+            "state": "open",
+            "category": "kernel",
+            "labels": []
+          },
+          {
+            "number": 20865,
+            "title": "[Feature] Improve Unit Test Coverage",
+            "html_url": "https://github.com/sgl-project/sglang/issues/20865",
+            "user": "ispobock",
+            "comments": 97,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "enhancement",
+              "good first issue",
+              "ci"
+            ]
+          },
+          {
+            "number": 21302,
+            "title": "[AITER-Upgrade] PR readiness",
+            "html_url": "https://github.com/sgl-project/sglang/issues/21302",
+            "user": "HaiShaw",
+            "comments": 24,
+            "state": "open",
+            "category": "other",
+            "labels": []
+          },
+          {
+            "number": 33522,
+            "title": "[Roadmap]Fast Engine Recovery: Weight Cache Daemon",
+            "html_url": "https://github.com/sgl-project/sglang/issues/33522",
+            "user": "liusy58",
+            "comments": 13,
+            "state": "open",
+            "category": "other",
+            "labels": []
+          },
+          {
+            "number": 32321,
+            "title": "[RFC] Replace the MLX runner-stub split with one Torch-owned SRT path and an exported whole-model MLX region",
+            "html_url": "https://github.com/sgl-project/sglang/issues/32321",
+            "user": "noob-se7en",
+            "comments": 8,
+            "state": "open",
+            "category": "model_support",
+            "labels": []
+          },
+          {
+            "number": 35808,
+            "title": "[Feature] Enhanced KV Cache Observability: Full-Lifecycle Metrics and Diagnostics",
+            "html_url": "https://github.com/sgl-project/sglang/issues/35808",
+            "user": "hhy-seven",
+            "comments": 4,
+            "state": "open",
+            "category": "feature",
+            "labels": []
+          },
+          {
+            "number": 34815,
+            "title": "PP8 disaggregated prefill has a load-independent ~30 s TTFT floor on Kimi-K3",
+            "html_url": "https://github.com/sgl-project/sglang/issues/34815",
+            "user": "edwardramsey",
+            "comments": 4,
+            "state": "open",
+            "category": "other",
+            "labels": []
+          },
+          {
+            "number": 25598,
+            "title": "NPU Development Roadmap (2026 H2)",
+            "html_url": "https://github.com/sgl-project/sglang/issues/25598",
+            "user": "iforgetmyname",
+            "comments": 4,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "npu"
+            ]
+          },
+          {
+            "number": 24544,
+            "title": "[sglang-miles] Integrate PD decode radix cache",
+            "html_url": "https://github.com/sgl-project/sglang/issues/24544",
+            "user": "ByronHsu",
+            "comments": 3,
+            "state": "closed",
+            "category": "other",
+            "labels": [
+              "inactive"
+            ]
+          },
+          {
+            "number": 28490,
+            "title": "[RFC][NPU][DLLM] Add fused tracker and coreset kernels for LLaDA2 JointThreshold",
+            "html_url": "https://github.com/sgl-project/sglang/issues/28490",
+            "user": "leedongkun30-arch",
+            "comments": 3,
+            "state": "closed",
+            "category": "feature",
+            "labels": [
+              "inactive"
+            ]
+          }
+        ]
+      },
+      "pull_requests": {
+        "total": 500,
+        "merged": 123,
+        "open": 320,
+        "closed": 57,
+        "by_category": {
+          "bug": 158,
+          "feature": 133,
+          "other": 62,
+          "performance": 41,
+          "model_support": 33,
+          "kernel": 27,
+          "ci_docs": 27,
+          "api": 10,
+          "distributed": 5,
+          "refactor": 4
+        },
+        "notable": [
+          {
+            "number": 33569,
+            "title": "[NPU] [Diffusion] Support MiniMax H3 on Ascend NPU's",
+            "html_url": "https://github.com/sgl-project/sglang/pull/33569",
+            "user": "OrangeRedeng",
+            "comments": 26,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "documentation",
+              "quant",
+              "amd",
+              "npu",
+              "run-ci",
+              "diffusion",
+              "jit-kernel"
+            ]
+          },
+          {
+            "number": 32754,
+            "title": "[AMD] Enable gfx1250 Support",
+            "html_url": "https://github.com/sgl-project/sglang/pull/32754",
+            "user": "akao-amd",
+            "comments": 25,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "high priority",
+              "amd",
+              "dependencies",
+              "deepseek",
+              "sgl-kernel",
+              "run-ci",
+              "jit-kernel",
+              "bypass-fastfail"
+            ]
+          },
+          {
+            "number": 29168,
+            "title": "[AMD] Enable unified-KV HiSparse on ROCm for DeepSeek-V4",
+            "html_url": "https://github.com/sgl-project/sglang/pull/29168",
+            "user": "amd-danli103",
+            "comments": 22,
+            "state": "open",
+            "category": "model_support",
+            "labels": [
+              "deepseek",
+              "run-ci",
+              "memory-pool"
+            ]
+          },
+          {
+            "number": 32207,
+            "title": "【NPU】Support EAGLE when PP enabled in prefill nodes",
+            "html_url": "https://github.com/sgl-project/sglang/pull/32207",
+            "user": "cen121212",
+            "comments": 22,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "deepseek",
+              "npu",
+              "run-ci"
+            ]
+          },
+          {
+            "number": 33910,
+            "title": "Refactor staging registration metadata fields",
+            "html_url": "https://github.com/sgl-project/sglang/pull/33910",
+            "user": "YAMY1234",
+            "comments": 18,
+            "state": "merged",
+            "category": "refactor",
+            "labels": [
+              "run-ci"
+            ]
+          },
+          {
+            "number": 25299,
+            "title": "[NSA] Avoid repeated NSA MQA logits memory queries",
+            "html_url": "https://github.com/sgl-project/sglang/pull/25299",
+            "user": "YAMY1234",
+            "comments": 16,
+            "state": "merged",
+            "category": "performance",
+            "labels": [
+              "run-ci"
+            ]
+          },
+          {
+            "number": 21921,
+            "title": "Add staging buffer CI test and documentation for heterogeneous TP",
+            "html_url": "https://github.com/sgl-project/sglang/pull/21921",
+            "user": "YAMY1234",
+            "comments": 16,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "documentation",
+              "high priority",
+              "run-ci"
+            ]
+          },
+          {
+            "number": 33778,
+            "title": "Avoid materializing GDN QKV tensors during target verification",
+            "html_url": "https://github.com/sgl-project/sglang/pull/33778",
+            "user": "vedantjh2",
+            "comments": 16,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "run-ci"
+            ]
+          },
+          {
+            "number": 22542,
+            "title": "[Mamba] Replace ping-pong dual buffer with direct radix slot allocation",
+            "html_url": "https://github.com/sgl-project/sglang/pull/22542",
+            "user": "YAMY1234",
+            "comments": 15,
+            "state": "closed",
+            "category": "ci_docs",
+            "labels": [
+              "documentation",
+              "run-ci"
+            ]
+          },
+          {
+            "number": 24959,
+            "title": "XPU: Enable GLM5.1 (GlmMoeDsaForCausalLM) DSA Attention",
+            "html_url": "https://github.com/sgl-project/sglang/pull/24959",
+            "user": "Xia-Weiwen",
+            "comments": 15,
+            "state": "open",
+            "category": "model_support",
+            "labels": [
+              "deepseek",
+              "intel",
+              "xpu",
+              "run-ci",
+              "jit-kernel",
+              "memory-pool"
+            ]
+          }
+        ]
+      },
+      "releases": []
+    },
+    "NVIDIA/TensorRT-LLM": {
+      "name": "NVIDIA/TensorRT-LLM",
+      "info": {
+        "stars": 14473,
+        "forks": 2691,
+        "open_issues": 1443,
+        "description": "TensorRT LLM provides users with an easy-to-use Python API to define Large Language Models (LLMs) and supports state-of-the-art optimizations to perform inference efficiently on NVIDIA GPUs. TensorRT LLM also contains components to create Python and C++ runtimes that orchestrate the inference execution in a performant way."
+      },
+      "commits": {
+        "total": 23,
+        "by_category": {
+          "bug": 15,
+          "feature": 5,
+          "model_support": 2,
+          "performance": 1
+        },
+        "top_authors": {
+          "TensorRT LLM AI Agent": 4,
+          "sunnyqgg": 2,
+          "longcheng-nv": 2,
+          "Yihan Wang": 1,
+          "Mike Iovine": 1,
+          "Jiahan Chang (Cyrus)": 1,
+          "zhaoyangwang-nvidia": 1,
+          "xingfei xi": 1,
+          "Bo Deng": 1,
+          "William Yang": 1
+        },
+        "key_commits": []
+      },
+      "issues": {
+        "total": 5,
+        "by_category": {
+          "other": 3,
+          "bug": 2
+        },
+        "notable": []
+      },
+      "pull_requests": {
+        "total": 269,
+        "merged": 51,
+        "open": 197,
+        "closed": 21,
+        "by_category": {
+          "bug": 119,
+          "feature": 87,
+          "performance": 23,
+          "other": 18,
+          "ci_docs": 9,
+          "model_support": 8,
+          "kernel": 2,
+          "refactor": 2,
+          "api": 1
+        },
+        "notable": [
+          {
+            "number": 16953,
+            "title": "[None][perf] Emission-assisted GVR top-K decode for the DeepSeek V4 indexer",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/16953",
+            "user": "siyidNV",
+            "comments": 265,
+            "state": "open",
+            "category": "performance",
+            "labels": [
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 14095,
+            "title": "[TRTLLM-11412][feat] Add offloading support for visual_gen",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/14095",
+            "user": "rahul-steiger-nv",
+            "comments": 167,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "VisualGen",
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 17586,
+            "title": "[None][infra] Retry SLURM agent online timeouts",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/17586",
+            "user": "Mgluhovskoi",
+            "comments": 129,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 13872,
+            "title": "[TRTLLM-12670][feat] add /start_profile and /stop_profile endpoints to trtllm…",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/13872",
+            "user": "JunyiXu-nv",
+            "comments": 94,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "api-compatible",
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 17821,
+            "title": "[TRTLLM-15293][perf] Add self-sampling (GVR V2) top-K decode kernels",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/17821",
+            "user": "longcheng-nv",
+            "comments": 85,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 14138,
+            "title": "[TRTLLM-9905][infra] Upload results periodically",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/14138",
+            "user": "yiqingy0",
+            "comments": 76,
+            "state": "open",
+            "category": "other",
+            "labels": []
+          },
+          {
+            "number": 17412,
+            "title": "[TRTLLM-15192][feat] Specialize CUDA graphs for LoRA",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/17412",
+            "user": "AlessioNetti",
+            "comments": 69,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "api-compatible",
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 16204,
+            "title": "[TRTLLMINF-95][infra] Add LLVM BOLT profile-generation engine and pipeline",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/16204",
+            "user": "mlefeb01",
+            "comments": 68,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 18033,
+            "title": "[None][infra] Declare and pin CI-imported deps to prevent transitive drops",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/18033",
+            "user": "brnguyen2",
+            "comments": 64,
+            "state": "open",
+            "category": "ci_docs",
+            "labels": [
+              "ci: full pre-merge approved"
+            ]
+          },
+          {
+            "number": 16847,
+            "title": "[TRTLLM-14616][feat] add VisualGen fp8 row-wise quant + autotuner",
+            "html_url": "https://github.com/NVIDIA/TensorRT-LLM/pull/16847",
+            "user": "o-stoner",
+            "comments": 64,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "VisualGen"
+            ]
+          }
+        ]
+      },
+      "releases": []
+    },
+    "ggerganov/llama.cpp": {
+      "name": "ggerganov/llama.cpp",
+      "info": {
+        "stars": 125587,
+        "forks": 22151,
+        "open_issues": 2217,
+        "description": "LLM inference in C/C++"
+      },
+      "commits": {
+        "total": 5,
+        "by_category": {
+          "bug": 2,
+          "model_support": 1,
+          "other": 1,
+          "feature": 1
+        },
+        "top_authors": {
+          "Aldehir Rojas": 1,
+          "Yuri Khrustalev": 1,
+          "Georgi Gerganov": 1,
+          "Neo Zhang": 1,
+          "fairydreaming": 1
+        },
+        "key_commits": []
+      },
+      "issues": {
+        "total": 69,
+        "by_category": {
+          "bug": 55,
+          "other": 4,
+          "feature": 3,
+          "performance": 3,
+          "model_support": 3,
+          "ci_docs": 1
+        },
+        "notable": [
+          {
+            "number": 19852,
+            "title": "Feature Request: Load System Prompt from a file",
+            "html_url": "https://github.com/ggml-org/llama.cpp/issues/19852",
+            "user": "allozaur",
+            "comments": 11,
+            "state": "closed",
+            "category": "feature",
+            "labels": [
+              "enhancement",
+              "server/webui"
+            ]
+          },
+          {
+            "number": 27579,
+            "title": "HIP/ROCm backend produces corrupted output on gfx1151: two dense architectures fail, Vulkan is correct with byte-identical flags",
+            "html_url": "https://github.com/ggml-org/llama.cpp/issues/27579",
+            "user": "Biggles10-claude",
+            "comments": 9,
+            "state": "open",
+            "category": "model_support",
+            "labels": []
+          },
+          {
+            "number": 27532,
+            "title": "WebUI Edit LLM responses (Payload / KV cache manipulation )",
+            "html_url": "https://github.com/ggml-org/llama.cpp/issues/27532",
+            "user": "nnnarvaez",
+            "comments": 6,
+            "state": "open",
+            "category": "other",
+            "labels": [
+              "server/ui"
+            ]
+          },
+          {
+            "number": 25804,
+            "title": "Performance issue with multi‑batch decoding",
+            "html_url": "https://github.com/ggml-org/llama.cpp/issues/25804",
+            "user": "mx305",
+            "comments": 4,
+            "state": "open",
+            "category": "performance",
+            "labels": [
+              "stale"
+            ]
+          },
+          {
+            "number": 27623,
+            "title": "Qwen3.8-27B (hybrid Gated DeltaNet): decode throughput collapses ~25x at context positions >~80K while prompt processing stays fast",
+            "html_url": "https://github.com/ggml-org/llama.cpp/issues/27623",
+            "user": "cuiyuxin-gif",
+            "comments": 3,
+            "state": "open",
+            "category": "performance",
+            "labels": []
+          },
+          {
+            "number": 27622,
+            "title": "Feature Request: Multiple Model Names, One LLM",
+            "html_url": "https://github.com/ggml-org/llama.cpp/issues/27622",
+            "user": "EJainDev",
+            "comments": 3,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "enhancement"
+            ]
+          }
+        ]
+      },
+      "pull_requests": {
+        "total": 95,
+        "merged": 18,
+        "open": 72,
+        "closed": 5,
+        "by_category": {
+          "feature": 23,
+          "other": 20,
+          "bug": 17,
+          "model_support": 10,
+          "ci_docs": 7,
+          "kernel": 7,
+          "distributed": 4,
+          "performance": 4,
+          "api": 3
+        },
+        "notable": [
+          {
+            "number": 22673,
+            "title": "llama + spec: MTP Support ",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/22673",
+            "user": "am17an",
+            "comments": 421,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "model",
+              "testing",
+              "Nvidia GPU",
+              "Vulkan",
+              "examples",
+              "python",
+              "server",
+              "ggml",
+              "Apple Metal"
+            ]
+          },
+          {
+            "number": 23398,
+            "title": "llama : add Gemma4 MTP",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/23398",
+            "user": "am17an",
+            "comments": 102,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "model",
+              "testing",
+              "examples",
+              "python",
+              "server"
+            ]
+          },
+          {
+            "number": 18039,
+            "title": "[Speculative decoding] feat: add EAGLE3 speculative decoding support",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/18039",
+            "user": "ruixiang63",
+            "comments": 76,
+            "state": "merged",
+            "category": "feature",
+            "labels": [
+              "model",
+              "testing",
+              "examples",
+              "python",
+              "server",
+              "ggml",
+              "hot"
+            ]
+          },
+          {
+            "number": 27342,
+            "title": "spec : add DFlash2 support (local convolution + candidate selector)",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/27342",
+            "user": "SubSir",
+            "comments": 69,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "model",
+              "testing",
+              "server",
+              "ggml",
+              "CUDA",
+              "conversion"
+            ]
+          },
+          {
+            "number": 27210,
+            "title": "spec : add adaptive MTP draft depth (draft-mtp-adaptive)",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/27210",
+            "user": "stew675",
+            "comments": 58,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "model",
+              "testing",
+              "server"
+            ]
+          },
+          {
+            "number": 26592,
+            "title": "CUDA: enable the CUB path on HIP via hipCUB",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/26592",
+            "user": "Geramy",
+            "comments": 49,
+            "state": "open",
+            "category": "kernel",
+            "labels": [
+              "testing",
+              "devops",
+              "ggml",
+              "CUDA"
+            ]
+          },
+          {
+            "number": 22970,
+            "title": "vulkan : transpose A-matrix data layout for K-quant mul_mat performance",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/22970",
+            "user": "Alex-JP-93",
+            "comments": 39,
+            "state": "open",
+            "category": "performance",
+            "labels": [
+              "documentation",
+              "Vulkan",
+              "python",
+              "ggml"
+            ]
+          },
+          {
+            "number": 25494,
+            "title": "vulkan : dequant q8_0 KV once in coopmat1",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/25494",
+            "user": "Nathanw1014",
+            "comments": 24,
+            "state": "merged",
+            "category": "other",
+            "labels": [
+              "testing",
+              "Vulkan",
+              "ggml"
+            ]
+          },
+          {
+            "number": 25635,
+            "title": "CUDA: XOR swizzle flash attn  K,V smem fp16 tiles",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/25635",
+            "user": "ynankani",
+            "comments": 23,
+            "state": "open",
+            "category": "kernel",
+            "labels": [
+              "testing",
+              "ggml",
+              "CUDA"
+            ]
+          },
+          {
+            "number": 24406,
+            "title": "vulkan: add Intel Xe flash attention optimization kernels (2/3, Xe-LPG Plus/Xe2/Xe3)",
+            "html_url": "https://github.com/ggml-org/llama.cpp/pull/24406",
+            "user": "fish-jiang",
+            "comments": 19,
+            "state": "open",
+            "category": "feature",
+            "labels": [
+              "Vulkan",
+              "ggml"
+            ]
+          }
+        ]
+      },
+      "releases": [
+        {
+          "tag_name": "v0.3.0",
+          "name": "v0.3.0",
+          "html_url": "https://github.com/ggml-org/llama.cpp/releases/tag/v0.3.0",
+          "published_at": "2026-08-25T10:22:58Z",
+          "body": "   ## Overview                                                                                                                                                                                                                                                                             \r\n               "
+        },
+        {
+          "tag_name": "b10622",
+          "name": "b10622",
+          "html_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b10622",
+          "published_at": "2026-08-25T12:16:56Z",
+          "body": "<details open>\n\nmetal : null-check buffer alloc to fix OOM crash (#25371)\n\n* metal : null-check ggml_metal_buffer_init result to avoid OOM crash\n\nggml_backend_metal_buffer_type_alloc_buffer used the result of\nggml_metal_buffer_init without checking for NULL. ggml_metal_buffer_init\nreturns NULL when "
+        },
+        {
+          "tag_name": "b10621",
+          "name": "b10621",
+          "html_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b10621",
+          "published_at": "2026-08-25T10:17:02Z",
+          "body": "<details open>\n\nllama.cpp : bump version to 0.3.0 (#27696)\n\n* llama.cpp : bump version to 0.3.0\n\n* ci : update release default desc\n\n* scripts : add prompt for generating release summary\n\n</details>\n\n**Website:**\n- <https://llama.app>\n\n**Attestations:**\n- <https://github.com/ggml-org/llama.cpp/attes"
+        },
+        {
+          "tag_name": "b10620",
+          "name": "b10620",
+          "html_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b10620",
+          "published_at": "2026-08-25T09:34:33Z",
+          "body": "<details open>\n\nsync : ggml\n\n</details>\n\n**Website:**\n- <https://llama.app>\n\n**Attestations:**\n- <https://github.com/ggml-org/llama.cpp/attestations/42810281>\n\n**macOS/iOS:**\n- [macOS Apple Silicon (arm64)](https://github.com/ggml-org/llama.cpp/releases/download/b10620/llama-b10620-bin-macos-arm64.t"
+        },
+        {
+          "tag_name": "b10618",
+          "name": "b10618",
+          "html_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b10618",
+          "published_at": "2026-08-25T07:06:56Z",
+          "body": "<details open>\n\ngrammar : parse \\- in char classes as literal hyphen (#27591)\n\n* grammar : accept \"\\-\" escape in character classes\n\ngbnf_escape_char_class() escapes '-' as \"\\-\" but parse_char() rejected\nthat escape, so generated tool-call grammars failed to parse.\n\nAssisted-by: Claude Code <claude@a"
+        }
+      ]
+    }
+  },
+  "cross_summary": {
+    "repos": [
+      {
+        "name": "vllm-project/vllm",
+        "stars": 90004,
+        "commits": 36,
+        "issues": 73,
+        "prs": 500,
+        "prs_merged": 48,
+        "releases": 0
+      },
+      {
+        "name": "sgl-project/sglang",
+        "stars": 32430,
+        "commits": 33,
+        "issues": 32,
+        "prs": 500,
+        "prs_merged": 123,
+        "releases": 0
+      },
+      {
+        "name": "NVIDIA/TensorRT-LLM",
+        "stars": 14473,
+        "commits": 23,
+        "issues": 5,
+        "prs": 269,
+        "prs_merged": 51,
+        "releases": 0
+      },
+      {
+        "name": "ggerganov/llama.cpp",
+        "stars": 125587,
+        "commits": 5,
+        "issues": 69,
+        "prs": 95,
+        "prs_merged": 18,
+        "releases": 5
+      }
+    ],
+    "totals": {
+      "stars": 262494,
+      "commits": 97,
+      "issues": 179,
+      "prs": 1364,
+      "releases": 5
+    }
+  },
+  "date": "2026-08-25",
+  "generated_at": "2026-08-25T16:41:00.386243+00:00"
+}
